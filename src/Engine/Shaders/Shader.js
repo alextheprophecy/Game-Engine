@@ -1,7 +1,9 @@
 class Shader {
-  constructor(vsrc, fsrc) {    
-    this.vsrc = vsrc  
-    this.fsrc = fsrc
+  constructor(vurl, furl) {    
+    this.vurl = vurl;
+    this.furl = furl;
+    this.vsrc = null;
+    this.fsrc = null;
     this.shaderProgram = null;         
   }
 
@@ -45,8 +47,43 @@ class Shader {
             return;
         }
         console.log("Shader program created successfully");
+
+        this.getParamLocations(gl)
+
     }).catch(e => console.error("Error loading shaders:", e));       
   }  
+
+
+  /**
+   * gets and stores locations of all attributes and uniforms for the shaders
+   * @param {} gl 
+   */
+  getParamLocations(gl){
+    this.attributes = {
+      positions: gl.getAttribLocation(this.shaderProgram, 'a_position'),
+      uvs: gl.getAttribLocation(this.shaderProgram, 'uv0'),
+      colours: gl.getAttribLocation(this.shaderProgram, 'colour'),
+    };
+
+    this.uniforms = {
+      projectionMatrix: {
+        type: 'mat4',
+        location: gl.getUniformLocation(this.shaderProgram, 'projectionMatrix')
+      },
+      modelViewMatrix: {
+        type: 'mat4',
+        location: gl.getUniformLocation(this.shaderProgram, 'modelViewMatrix'),
+      }
+    };
+  }
+
+  /**
+   * set gl to use this current shader program
+   * @param {*} gl 
+   */
+  use(gl){
+    gl.useProgram(this.shaderProgram)
+  }
 
   /**
    * 
@@ -68,7 +105,10 @@ class Shader {
         xhr.open("GET", url, true);
         xhr.send();
     });
-}
+  }
+
+
+
 }
 
 export default Shader

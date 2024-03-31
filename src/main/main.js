@@ -1,5 +1,6 @@
 import Material from "../Engine/Shaders/Material.js";
 import Shader from "../Engine/Shaders/Shader.js";
+import Mesh from "../Engine/Geometry/mesh.js";
 
 setup();  
 
@@ -14,41 +15,37 @@ function setup() {
     gl.enable(gl.DEPTH_TEST); // Enable depth testing
     gl.depthFunc(gl.LEQUAL); // Near things obscure far things
 
-    loadResources(gl);
+    main(gl);
 }
 
-function loadResources(gl) {
-    console.log("loading resources")
-    let materials = []
-    const mat1 = new Shader("../Engine/Shaders/vertshader.vs.glsl", "../Engine/Shaders/fragshader.fs.glsl")
 
-    materials.push(mat1)
-    Promise.all(materials.map(m=>m.createShaderProgram(gl))).then(()=>main(gl, materials)).catch(e=>console.log("error loading material list", e))
-}
-
-function main(gl, materials) {
-    gl.useProgram(materials[0].shaderProgram);
-    
+function main(gl) {    
     const vertices = [
         0, 0, 0,
-        0, 0.5, 0,
-        0.7, 0, 0
+        0, 1, 0,
+        1, 0, 0,
+        1, 1, 0
     ];
-    
-    // Create a buffer to store vertex data
-    const vertexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-    
-    // Get attribute locations from shader program
-    const positionAttributeLocation = gl.getAttribLocation(materials[0].shaderProgram, 'a_position');
-    
-    // Enable the attribute
-    gl.enableVertexAttribArray(positionAttributeLocation);
-    
-    gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
-    
+
+    const indices = [
+        0, 1, 2,
+        1, 3, 2
+    ]
+
     gl.clear(gl.COLOR_BUFFER_BIT);
     
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    const shader1 = new Shader("../Engine/Shaders/vertshader.vs.glsl", "../Engine/Shaders/fragshader.fs.glsl")
+    shader1.createShaderProgram(gl).then(()=>{
+        const mat2 = new Material(shader1);
+
+        const triangle = new Mesh()
+        triangle.bufferData(gl, indices, 3, "index")
+        triangle.bufferData(gl, vertices, 3, "positions")
+       
+
+        triangle.setMaterial(gl, mat2)
+        triangle.draw(gl)
+    })
+
 }
