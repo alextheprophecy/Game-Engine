@@ -1,52 +1,131 @@
 class Material {
+  constructor(vurl, furl) {    
+    this.vurl = vurl;
+    this.furl = furl;
+    this.vsrc = null;
+    this.fsrc = null;
+    this.shaderProgram = null;         
+  }
 
-    constructor(shader) {
-        this.shader = shader 
-        this.attributes = {...this.shader.attributes}
-        this.uniforms = {}
-        for (let u in this.shader.uniforms){
-            this.uniforms[u] = {
-                location : this.shader.uniforms[u].location,
-                type : this.shader.uniforms[u].type,
-                value : null
-            }
-        }        
-    }  
+  /**
+   * creates shader program for given vsh and fsh and stores in this.shaderProgram when done 
+   * @param {} gl 
+   * @returns promise
+   */
+  createShaderProgram(gl){
+    return Promise.all([
+        this.loadShaderFile(this.vurl),
+        this.loadShaderFile(this.furl)
+    ]).then(sources => {
+        this.vsrc = sources[0];
+        this.fsrc = sources[1];
+        // Create vertex shader
+        const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vertexShader, this.vsrc);
+        gl.compileShader(vertexShader);
+        if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+            console.error("Vertex shader compilation error: " + gl.getShaderInfoLog(vertexShader));
+            return;
+        }
 
-    setUniform(name, value) {
-        if (this.uniforms[name])this.uniforms[name].value = value;
-        else console.error('Uniform does not exist');
-    }
+        // Create fragment shader
+        const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+        gl.shaderSource(fragmentShader, this.fsrc);
+        gl.compileShader(fragmentShader);
+        if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+            console.error("Fragment shader compilation error: " + gl.getShaderInfoLog(fragmentShader));
+            return;
+        }
 
-    applyUniforms(gl) {
-        this.shader.use(gl)
+        // Create shader program
+        this.shaderProgram = gl.createProgram();
+        gl.attachShader(this.shaderProgram, vertexShader);
+        gl.attachShader(this.shaderProgram, fragmentShader);
+        gl.linkProgram(this.shaderProgram);
+        if (!gl.getProgramParameter(this.shaderProgram, gl.LINK_STATUS)) {
+            console.error("Shader program linking error: " + gl.getProgramInfoLog(this.shaderProgram));
+            return;
+        }
+        console.log("Shader program created successfully");
 
-        for (let uniformName in this.uniforms) {
-            const uniform = this.uniforms[uniformName];
-            const loc = uniform.location;
-            const val = uniform.value;
+        this.getParamLocations(gl)
 
-            if (loc !== null && val !== null) {
-                switch (uniform.type) {
-                    case 'mat4':
-                        gl.uniformMatrix4fv(loc, false, val);
-                        break;
-                    case 'float':
-                        gl.uniform1f(loc, val);
-                        break;
-                    case 'vec2':
-                        gl.uniform2fv(loc, val);
-                        break;
-                    case 'vec3':
-                        gl.uniform3fv(loc, val);
-                        break;
-                    default:
-                        console.warn(`Unsupported uniform type for ${uniformName}.`);
+    }).catch(e => console.error("Error loading shaders:", e));       
+  }  
+
+
+  /**
+   * gets and stores locations of all attributes and uniforms for this material
+   * @param {} gl 
+   */
+  getParamLocations(gl){
+    this.attributes = {
+      positions: gl.getAttribLocation(this.shaderProgram, 'position'),
+      uvs: gl.getAttribLocation(this.shaderProgram, 'uv0'),
+      colours: gl.getAttribLocation(this.shaderProgram, 'colour'),
+      normals: gl.getAttribLocation(this.shaderProgram, 'normal'),
+    };
+
+    this.uniforms = {
+      projectionMatrix: {
+        type: 'mat4',
+        location: gl.getUniformLocation(this.shaderProgram, 'projectionMatrix')
+      },
+      modelViewMatrix: {
+        type: 'mat4',
+        location: gl.getUniformLocation(this.shaderProgram, 'modelViewMatrix'),
+      },
+      transformationMatrix: {
+        type: 'mat4',
+        location: gl.getUniformLocation(this.shaderProgram, 'transformationMatrix'),
+      },
+      lightPosition: {
+        type: 'vec3',
+        location: gl.getUniformLocation(this.shaderProgram, 'lightPosition'),
+      },
+      lightColour: {
+        type: 'vec3',
+        location: gl.getUniformLocation(this.shaderProgram, 'lightColour'),
+      },
+      cameraPosition: {
+        type: 'vec3',
+        location: gl.getUniformLocation(this.shaderProgram, 'cameraPosition'),
+      }
+    };
+  }
+
+  /**
+   * set gl to use this current shader program
+   * @param {*} gl 
+   */
+  use(gl){
+    gl.useProgram(this.shaderProgram)
+  }
+
+  /**
+   * 
+   * @param {*} url 
+   * @returns a promise with shader source data
+   */
+  loadShaderFile(url) {
+    return new Promise((res, rej) => {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    res(xhr.responseText);
+                } else {
+                    rej(new Error("Failed to load shader file: " + url));
                 }
             }
-        }
-    }
-}
+        };
+        xhr.open("GET", url, true);
+        xhr.send();
+    });
+  }
 
+
+
+}
 
 export default Material

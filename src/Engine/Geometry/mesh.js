@@ -2,6 +2,7 @@ class Mesh {
     constructor() {
         this.buffers = {};  
         this.vertexCount = 0
+        this.material = null
     }
   
     //create and store data in buffer
@@ -21,7 +22,7 @@ class Mesh {
         this.buffers[name] = {buffer:buffer, size:size};
     }
   
-    setMaterial(gl, material) {
+    bind(gl, material) {
         this.material = material
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
@@ -31,7 +32,7 @@ class Mesh {
     
             if (k == 'index') {
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b.buffer);
-            } else {
+            }else{
                 gl.bindBuffer(gl.ARRAY_BUFFER, b.buffer);
                 gl.vertexAttribPointer(material.attributes[k], b.size, gl.FLOAT, false, 0, 0);
                 gl.enableVertexAttribArray(material.attributes[k]);
