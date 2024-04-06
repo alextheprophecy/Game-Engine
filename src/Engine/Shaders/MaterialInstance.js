@@ -30,6 +30,8 @@ class MaterialInstance {
     update(gl) {
         this.shader.use(gl)
  
+        let textureIndex = 0;
+
         for (let uniformName in this.uniforms) {
             const uniform = this.uniforms[uniformName];
             const loc = uniform.location;
@@ -51,6 +53,9 @@ class MaterialInstance {
                         break;
                     case 'vec4':
                         gl.uniform4fv(loc, val);
+                        break;
+                    case 'texture':
+                        gl.uniform1i(loc, textureIndex);
                         break;
                     default:
                         console.warn(`Unsupported uniform type for ${uniformName}.`);

@@ -22,7 +22,7 @@ class MeshLoader{
           objNormals,
         ];
 
-        let webglVertexData = [
+        let finalData = [
           [],   // positions
           [],   // texcoords
           [],   // normals
@@ -36,7 +36,7 @@ class MeshLoader{
             }
             const objIndex = parseInt(objIndexStr)
             const index = objIndex + (objIndex >= 0 ? 0 : objVertexData[i].length);
-            webglVertexData[i].push(...objVertexData[i][index]);
+            finalData[i].push(...objVertexData[i][index]);
           });
         }
 
@@ -82,13 +82,16 @@ class MeshLoader{
           }
           handler(parts, unparsedArgs);
         }
+        
+        const [positions, uvs, normals] = finalData
 
-
-
+        const scale = 3.75
+        
+        
         const mesh = new Mesh(false)
-        //mesh.bufferData(gl, objIndex.flat(), 3, "index")
-        mesh.bufferData(gl, webglVertexData[2], 3, "normals")
-        mesh.bufferData(gl, webglVertexData[0], 3, "positions")
+        mesh.bufferData(gl, normals, 3, "normals")
+        mesh.bufferData(gl, positions.map(p=>p*scale), 3, "positions")
+        mesh.bufferData(gl, uvs.map((u,i)=>i%2==0?u:1-u), 2, "uvs") //weird bug, every second uv is flipped (1-uv)
         return mesh
     }
 

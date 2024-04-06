@@ -3,7 +3,7 @@ const { mat4, mat3, vec2, vec3, vec4, quat } = glMatrix;
 class Camera {
     constructor(canvas){
         this.position = [0,3,10]
-        this.target = [0, -1, 0]; // Camera target
+        this.target = [0, 2, 0]; // Camera target
 
         this.viewMatrix = mat4.create();
         

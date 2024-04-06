@@ -197,7 +197,7 @@ class CubeMesh extends Mesh {
           this.bufferData(gl, indices, 3, "index")
           this.bufferData(gl, normals, 3, "normals")
           this.bufferData(gl, positions, 3, "positions")
-          //this.bufferData(gl, colours, 4, "colours")
+          this.bufferData(gl, uvs, 2, "uvs")
 
 
     }

@@ -6,6 +6,7 @@ import MeshLoader from "../Engine/Utils/MeshLoader.js";
 import PointLight from "../Engine/Objects/PointLight.js";
 import Scene from "../Engine/Objects/Scene.js";
 import Terrain from "../Engine/Objects/Terrain.js";
+import Texture from "../Engine/Shaders/Texture.js";
 const { mat4, mat3, vec2, vec3, vec4, quat} = glMatrix;
 
 setup();  
@@ -30,7 +31,9 @@ function main(gl, canvas) {
     
     const materials = []
     const material1 = new Material("../Engine/Shaders/vertshader.vs.glsl", "../Engine/Shaders/fragshader.fs.glsl")
+    const materialText = new Material("../Engine/Shaders/textured.vs.glsl", "../Engine/Shaders/textured.fs.glsl")
     materials.push(material1)
+    materials.push(materialText)
 
     const pointLight = new PointLight(new Transform([3,1.5,3]), 2, [1,1,1])
 
@@ -41,12 +44,13 @@ function main(gl, canvas) {
             camera.move(event)
         });
 
+        const texture = new Texture("../Resources/Textures/highpolymandiffuse.jpg").load(gl)
         const terrain = new Terrain()
 
         scene.createEntity(terrain.getMesh(gl), material1, new Transform([-10,-1,-10]), [0,1,0])
-        scene.createEntity(new CubeMesh(gl), material1, new Transform([-2,0,2]), [0,0,1])
-        scene.createEntity('../Resources/Models/human.obj', material1, new Transform([0,-1,0]))
-        scene.createEntity('../Resources/Models/Tree02.obj', material1, new Transform([5,-1,0]), [1,1,0])
+        scene.createEntity(new CubeMesh(gl), materialText, new Transform([-2,0,2]), [0,0,1])
+        scene.createEntity('../Resources/Models/highpolyman.obj', materialText, new Transform([0,-1,0]))
+        //scene.createEntity('../Resources/Models/Tree02.obj', materialText, new Transform([5,-1,0]), [1,1,0])
 
         var animate = function(time) {
             scene.render()

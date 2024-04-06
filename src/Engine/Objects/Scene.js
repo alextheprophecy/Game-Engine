@@ -15,7 +15,7 @@ class Scene {
     }
 
     init(){    
-        return Promise.all(this.materials.map(m => m.createShaderProgram(this.gl)))
+        return Promise.all(this.materials.map(m => m.load(this.gl)))
     }
 
     /**
@@ -52,7 +52,7 @@ class Scene {
             }
             return mesh
         }
-        Promise.resolve(meshPromise()).then((m)=>{
+        return Promise.resolve(meshPromise()).then((m)=>{
             const entity = new Entity(m, material, transform)
             this.addObject(entity, colour)
         })

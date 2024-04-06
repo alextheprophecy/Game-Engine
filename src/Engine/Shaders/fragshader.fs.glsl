@@ -4,7 +4,6 @@ precision highp float;
 in vec3 vPosition;
 in vec3 vColour;
 in vec3 vNormal;
-//in vec2 vTexCoord;
 
 // Uniforms
 uniform vec3 lightPosition; // Position of the point light
@@ -15,7 +14,6 @@ uniform vec4 u_fogColour;
 uniform float u_fogDensity;
 uniform float u_fogStart;
 
-//uniform sampler2D u_texture;
 
 out vec4 fragColour;
 
@@ -56,5 +54,4 @@ void main()
     float fogAmount = 1.0 - exp2(-u_fogDensity * u_fogDensity * fogDistance * fogDistance * LOG2);
     fogAmount = clamp(fogAmount, 0., 1.);
     fragColour = mix(tfragColour, u_fogColour, fogAmount*linearFog);  
-    //fragColour = texture(u_texture, vTexCoord);
 }  

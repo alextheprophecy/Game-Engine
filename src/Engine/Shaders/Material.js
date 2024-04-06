@@ -12,7 +12,7 @@ class Material {
    * @param {} gl 
    * @returns promise
    */
-  createShaderProgram(gl){
+  load(gl){
     return Promise.all([
         this.loadShaderFile(this.vurl),
         this.loadShaderFile(this.furl)
@@ -106,6 +106,10 @@ class Material {
       fogStart: {
         type: 'float',
         location: gl.getUniformLocation(this.shaderProgram, 'u_fogStart'),
+      },
+      texture: {
+        type: 'texture',
+        location: gl.getUniformLocation(this.shaderProgram, 'u_texture'),
       }
     };
   }
