@@ -1,14 +1,17 @@
 class Mesh {
-    constructor() {
+    constructor(drawWithIndices=true) {
         this.buffers = {};  
         this.vertexCount = 0
         this.material = null
+        this.drawWithIndices = drawWithIndices
     }
   
     //create and store data in buffer
-    bufferData(gl, data, size, name) {  
+    bufferData(gl, data, size, name) {
         const buffer = gl.createBuffer();
      
+        if(name=='positions'&&!this.drawWithIndices)this.vertexCount=data.length
+
         if (name == 'index'){
             const typedArr = new Uint16Array(data)
             this.vertexCount = typedArr.length
@@ -22,8 +25,8 @@ class Mesh {
         this.buffers[name] = {buffer:buffer, size:size};
     }
   
-    bind(gl, material) {
-        this.material = material
+    bind(gl, material=null) {
+        if(!this.material)this.material = material
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
         for (let k in this.buffers) {
@@ -41,10 +44,12 @@ class Mesh {
     }
   
     draw(gl) {
-       this.material.shader.use(gl)
-       const vertexCount = this.vertexCount
-       gl.drawElements(gl.TRIANGLES, vertexCount, gl.UNSIGNED_SHORT, 0);
+        this.bind(gl, this.material)
+        this.material.shader.use(gl)
+        const vertexCount = this.vertexCount
+        if(this.drawWithIndices) gl.drawElements(gl.TRIANGLES, vertexCount, gl.UNSIGNED_SHORT, 0);
+        else gl.drawArrays(gl.TRIANGLES, 0, vertexCount)
     }
-  }
+}
 
-  export default Mesh
+export default Mesh

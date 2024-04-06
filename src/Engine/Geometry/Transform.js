@@ -1,9 +1,9 @@
 const { mat4, mat3, vec2, vec3, vec4, quat } = glMatrix;
 
 class Transform{
-    constructor(position=null, rotation=null) {
-        this.position=position?position:vec3.create()
-        this.rotation=rotation?rotation:vec3.create()
+    constructor(position=vec3.create(), rotation=vec3.create()) {
+        this.position=position
+        this.rotation=rotation
     }
 
     rotate(x,y,z){

@@ -1,0 +1,12 @@
+# Blender 4.0.2 MTL File: 'Tree02.blend'
+# www.blender.org
+
+newmtl MaterialTree02
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+illum 2
+map_Kd C:/Users/alexa/AppData/Local/Temp/a451a681-347b-4481-93fa-04f2643c33c6_Tree02.rar.3c6/Texture/0.jpg
+map_d C:/Users/alexa/AppData/Local/Temp/a451a681-347b-4481-93fa-04f2643c33c6_Tree02.rar.3c6/Texture/0.jpg

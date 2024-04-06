@@ -1,8 +1,8 @@
 class MaterialInstance {
+    defaultColour = [0.8,0.2,0.42]
 
-    constructor(shader, camera=null) {
+    constructor(shader) {
         this.shader = shader 
-        this.camera = camera
         this.attributes = {...this.shader.attributes}
         this.uniforms = {}
         for (let u in this.shader.uniforms){
@@ -11,12 +11,12 @@ class MaterialInstance {
                 type : this.shader.uniforms[u].type,
                 value : null
             }
-        }        
+        }       
+        
+        this.setColour(this.defaultColour)
     }  
 
-    setCamera(camera){
-        this.camera = camera
-    }
+    setColour(colour){ this.setUniform("objectColour", colour);}
 
     setUniform(name, value) {
         if (this.uniforms[name])this.uniforms[name].value = value;
@@ -29,11 +29,7 @@ class MaterialInstance {
      */
     update(gl) {
         this.shader.use(gl)
-        if(this.camera){
-            this.setUniform('projectionMatrix', this.camera.projectionMatrix)
-            this.setUniform('modelViewMatrix', this.camera.viewMatrix)
-        }
-
+ 
         for (let uniformName in this.uniforms) {
             const uniform = this.uniforms[uniformName];
             const loc = uniform.location;
@@ -52,6 +48,9 @@ class MaterialInstance {
                         break;
                     case 'vec3':
                         gl.uniform3fv(loc, val);
+                        break;
+                    case 'vec4':
+                        gl.uniform4fv(loc, val);
                         break;
                     default:
                         console.warn(`Unsupported uniform type for ${uniformName}.`);

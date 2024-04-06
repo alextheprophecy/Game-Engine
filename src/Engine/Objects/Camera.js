@@ -2,8 +2,8 @@ const { mat4, mat3, vec2, vec3, vec4, quat } = glMatrix;
 
 class Camera {
     constructor(canvas){
-        this.position = [0,2,7]
-        this.target = [0, 0, 0]; // Camera target
+        this.position = [0,3,10]
+        this.target = [0, -1, 0]; // Camera target
 
         this.viewMatrix = mat4.create();
         
@@ -14,12 +14,28 @@ class Camera {
         const far = 100.0; // Far clipping plane
 
         this.projectionMatrix = mat4.create();
-        mat4.perspective(this.projectionMatrix, fov, aspectRatio, near, far);
+        mat4.perspective(this.projectionMatrix, fov, aspectRatio, near, far);             
     }
 
     recalculate(){
         const up = [0, 1, 0]; // Up vector
+        //this.viewMatrix = [1,0,1,1]
         mat4.lookAt(this.viewMatrix, this.position, this.target, up);
+    }
+
+    move(event){
+        const rotSpeed = 0.05
+        const x = this.position[0]
+        const z = this.position[2]
+        this.position[1] = 3
+        if (event.key === "a") {                
+            this.position[0] = x * Math.cos(rotSpeed) + z * Math.sin(rotSpeed);
+            this.position[2] = z * Math.cos(rotSpeed) - x * Math.sin(rotSpeed);
+        }else if (event.key === "d") {
+            this.position[0] = x * Math.cos(rotSpeed) - z * Math.sin(rotSpeed);
+            this.position[2] = z * Math.cos(rotSpeed) + x * Math.sin(rotSpeed);
+        }
+        this.recalculate()
     }
 }
 

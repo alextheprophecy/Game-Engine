@@ -75,6 +75,10 @@ class Material {
         type: 'mat4',
         location: gl.getUniformLocation(this.shaderProgram, 'modelViewMatrix'),
       },
+      cameraPosition: {
+        type: 'vec3',
+        location: gl.getUniformLocation(this.shaderProgram, 'cameraPosition'),
+      },
       transformationMatrix: {
         type: 'mat4',
         location: gl.getUniformLocation(this.shaderProgram, 'transformationMatrix'),
@@ -87,9 +91,21 @@ class Material {
         type: 'vec3',
         location: gl.getUniformLocation(this.shaderProgram, 'lightColour'),
       },
-      cameraPosition: {
+      objectColour: {
         type: 'vec3',
-        location: gl.getUniformLocation(this.shaderProgram, 'cameraPosition'),
+        location: gl.getUniformLocation(this.shaderProgram, 'objectColour'),
+      },
+      fogColour: {
+        type: 'vec4',
+        location: gl.getUniformLocation(this.shaderProgram, 'u_fogColour'),
+      },
+      fogDensity: {
+        type: 'float',
+        location: gl.getUniformLocation(this.shaderProgram, 'u_fogDensity'),
+      },
+      fogStart: {
+        type: 'float',
+        location: gl.getUniformLocation(this.shaderProgram, 'u_fogStart'),
       }
     };
   }
