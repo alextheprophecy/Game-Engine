@@ -15,7 +15,7 @@ out vec3 vPosition;
 
 void main() {
     vColour = objectColour;
-    vNormal = normal;
+    vNormal = (transpose(inverse(transformationMatrix))*vec4(normal,1.0)).xyz;
 
     vec4 worldPosition = modelViewMatrix*transformationMatrix * vec4(position, 1.0);
     vPosition = worldPosition.xyz; 

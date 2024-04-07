@@ -55,6 +55,7 @@ class Scene {
         return Promise.resolve(meshPromise()).then((m)=>{
             const entity = new Entity(m, material, transform)
             this.addObject(entity, colour)
+            return entity
         })
     }
 

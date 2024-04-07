@@ -85,7 +85,7 @@ class MeshLoader{
         
         const [positions, uvs, normals] = finalData
 
-        const scale = 3.75
+        const scale = 1.75
         
         
         const mesh = new Mesh(false)

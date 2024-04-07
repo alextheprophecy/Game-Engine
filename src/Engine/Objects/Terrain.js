@@ -2,9 +2,9 @@ import Mesh from "../Geometry/Mesh.js";
 
 class Terrain extends Mesh {
 
-    constructor(){
+    constructor(width, height, spacing){
         super()
-        this.generateTerrain(100,100,0.2)
+        this.generateTerrain(width,height,spacing)
     }
  
     generateTerrain(width, length, spacing) {

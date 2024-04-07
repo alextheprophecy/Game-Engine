@@ -26,37 +26,56 @@ function setup() {
 
  
 function main(gl, canvas) { 
-
+    
     const camera = new Camera(canvas)
     
     const materials = []
-    const material1 = new Material("../Engine/Shaders/vertshader.vs.glsl", "../Engine/Shaders/fragshader.fs.glsl")
-    const materialText = new Material("../Engine/Shaders/textured.vs.glsl", "../Engine/Shaders/textured.fs.glsl")
-    materials.push(material1)
-    materials.push(materialText)
+    const material1 = new Material("../Resources/Shaders/vertshader.vs.glsl", "../Resources/Shaders/fragshader.fs.glsl")
+    const materialText = new Material("../Resources/Shaders/textured.vs.glsl", "../Resources/Shaders/textured.fs.glsl")
+    const terrainMat = new Material("../Resources/Shaders/terrain.vs.glsl", "../Resources/Shaders/textured.fs.glsl")
+    materials.push(material1, materialText, terrainMat)
 
-    const pointLight = new PointLight(new Transform([3,1.5,3]), 2, [1,1,1])
+    const pointLight = new PointLight(new Transform([3,0,3]), 2, [1,1,1])
 
     const scene = new Scene(gl, camera, pointLight, materials)
 
-    scene.init().then(()=>{
-        document.addEventListener("keypress", function(event) {
-            camera.move(event)
-        });
-
-        const texture = new Texture("../Resources/Textures/highpolymandiffuse.jpg").load(gl)
-        const terrain = new Terrain()
-
-        scene.createEntity(terrain.getMesh(gl), material1, new Transform([-10,-1,-10]), [0,1,0])
-        scene.createEntity(new CubeMesh(gl), materialText, new Transform([-2,0,2]), [0,0,1])
-        scene.createEntity('../Resources/Models/highpolyman.obj', materialText, new Transform([0,-1,0]))
+    scene.init().then(()=>{        
+        setUpInputListeners(camera, canvas)
+        const texture = new Texture("../Resources/Textures/Texture.jpg").load(gl)
+        const terrain = new Terrain(10,10,1.5)
+        let a = null
+        scene.createEntity(terrain.getMesh(gl), terrainMat, new Transform([-5,-1,-5]), [1,1,1])
+        //scene.createEntity(new CubeMesh(gl), materialText, new Transform([-2,0,2]), [0,0,1])
+        scene.createEntity('../Resources/Models/croissant.obj', materialText, new Transform([0,1,0])).then(e=>a=e)
         //scene.createEntity('../Resources/Models/Tree02.obj', materialText, new Transform([5,-1,0]), [1,1,0])
 
         var animate = function(time) {
+            //if(a)a.transform.rotate(0,1,0)
             scene.render()
             window.requestAnimationFrame(animate);
         }
         animate(0);
     })
+
+    function setUpInputListeners(camera, canvas){
+        document.addEventListener("keypress", function(event) {
+            camera.keyPress(event)
+        });
+        
+        canvas.onclick = function() {
+            canvas.requestPointerLock();
+        }
+        document.addEventListener('pointerlockchange', ()=>{
+            if(document.pointerLockElement === canvas) {
+                document.addEventListener("mousemove", move, false);
+            } else {
+              document.removeEventListener("mousemove",move, false);
+            }
+        }, false);
+             
+        function move(e){
+            camera.mouseMove(e)
+        }
+    }
 
 }

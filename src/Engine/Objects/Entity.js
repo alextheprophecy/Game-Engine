@@ -23,7 +23,6 @@ class Entity {
         this.mesh.material.setUniform('fogColour', [0.8, 0.8, 1, 1])
         this.mesh.material.setUniform('fogDensity', 0.045)
         this.mesh.material.setUniform('fogStart', 3.0)
-        this.mesh.material.setUniform('fogStart', 3.0)
         this.mesh.material.update(gl)
         this.mesh.draw(gl)
     }

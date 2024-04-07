@@ -26,32 +26,27 @@ void main()
     vec3 ambient = ambientStrength * lightColour;
 
     
-    float diffuseStrength = 0.8;
+    float diffuseStrength = 2.0;
     vec3 norm = normalize(vNormal);
     vec3 lightDir = normalize(lightPosition - vPosition);  
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = diffuseStrength * diff * lightColour;
 
-    float specularStrength = 0.7;
-    //vec3 reflectDir = reflect(-lightDir, norm);
+
+    float specularStrength = 1.7;
     vec3 viewDir = normalize(cameraPosition - vPosition);
-
     vec3 halfwayDir = normalize(lightDir + viewDir);  
-
     float spec = pow(max(dot(norm, halfwayDir), 0.0), 32.0);
-    //float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
-
     vec3 specular = specularStrength * spec * lightColour;   
+    
 
-    vec3 result = (ambient+diffuse) * vColour + specular;
+    vec3 result = (ambient+diffuse) * vColour;
     vec4 tfragColour = vec4(result, 1);
 
     float fogDistance = length(vPosition);
-
     float linearFog = smoothstep(u_fogStart, u_fogStart+5.0, fogDistance);
-
-
     float fogAmount = 1.0 - exp2(-u_fogDensity * u_fogDensity * fogDistance * fogDistance * LOG2);
-    fogAmount = clamp(fogAmount, 0., 1.);
-    fragColour = mix(tfragColour, u_fogColour, fogAmount*linearFog);  
+    fogAmount = clamp(fogAmount, 0., 1.0);
+
+    fragColour = tfragColour;// mix(tfragColour, u_fogColour, fogAmount*linearFog);  
 }  
