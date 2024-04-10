@@ -1,12 +1,12 @@
 import Mesh from "./Mesh.js";
 
 class CubeMesh extends Mesh {
-    constructor(gl) {
-        super()
-        this.createCube(gl)
+    constructor(gl, size=1) {
+        super(true)
+        this.createCube(gl, size)
     }
 
-    createCube(gl){
+    createCube(gl, size){
         const positions = [
             // Front face
             -1.0, -1.0,  1.0,
@@ -196,7 +196,7 @@ class CubeMesh extends Mesh {
 
           this.bufferData(gl, indices, 3, "index")
           this.bufferData(gl, normals, 3, "normals")
-          this.bufferData(gl, positions, 3, "positions")
+          this.bufferData(gl, positions.map(p=>p*size), 3, "positions")
           this.bufferData(gl, uvs, 2, "uvs")
 
 

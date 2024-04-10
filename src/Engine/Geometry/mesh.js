@@ -50,6 +50,13 @@ class Mesh {
         if(this.drawWithIndices) gl.drawElements(gl.TRIANGLES, vertexCount, gl.UNSIGNED_SHORT, 0);
         else gl.drawArrays(gl.TRIANGLES, 0, vertexCount)
     }
+
+    drawLight(gl) {
+        this.bind(gl, this.material)
+        this.material.shader.use(gl)
+        const vertexCount = this.vertexCount
+        gl.drawElements(gl.TRIANGLES, vertexCount, gl.UNSIGNED_SHORT, 0);        
+    }
 }
 
 export default Mesh

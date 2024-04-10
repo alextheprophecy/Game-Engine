@@ -1,20 +1,24 @@
-import Mesh from "../Geometry/Mesh.js"
+import CubeMesh from "../Geometry/CubeMesh.js"
 import Material from "../Shaders/Material.js"
+import Shader from "../Shaders/Shader.js"
 import Entity from "./Entity.js"
 class PointLight{
+
     constructor(transform, brightness, colour=[1,1,1]){
         this.transform = transform
         this.brightness = brightness
         this.colour = colour
-        //this.material =  new Material("../Resources/Shaders/terrain.vs.glsl", "../Resources/Shaders/textured.fs.glsl")
-        //this.entity = null
+        this.shader = new Shader("../Resources/Shaders/light.vs.glsl", "../Resources/Shaders/light.fs.glsl")
+        this.entity = null
     }
 
-  /*  init(gl){.then(()=>this.light.init(this.gl)
-        const mesh = new Mesh(false)
-        mesh.bufferData(gl, transform.position, "positions")
-        this.entity = new Entity(mesh, this.material)
-    } */
+    load(gl){
+        this.material = new Material(this.shader, this.colour) 
+        this.entity = new Entity(new CubeMesh(gl, 0.1), this.material, this.transform)
+        this.entity.init(gl)
+        this.entity.mesh.material.setUniform('transformationMatrix', this.transform.transformationMatrix())
+        return this.entity
+    }
 }
 
 export default PointLight

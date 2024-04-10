@@ -1,42 +1,54 @@
-class MaterialInstance {
+class cMaterial {
     defaultColour = [0.8,0.2,0.42]
+    defaultFogData = {'fogColour': [0.8, 0.8, 1, 1], 'fogDensity': 0.045, 'fogStart': 9.0}
 
-    constructor(shader) {
+    constructor(shader, colour =null, texture=null, fogData = null) {
         this.shader = shader 
         this.attributes = {...this.shader.attributes}
         this.uniforms = {}
         for (let u in this.shader.uniforms){
-            this.uniforms[u] = {
-                location : this.shader.uniforms[u].location,
-                type : this.shader.uniforms[u].type,
-                value : null
-            }
+            if(this.shader.uniforms[u].location!==null)
+                this.uniforms[u] = {
+                    location : this.shader.uniforms[u].location,
+                    type : this.shader.uniforms[u].type,
+                    value : null
+                }
         }       
-        
-        this.setColour(this.defaultColour)
-    }  
 
-    setColour(colour){ this.setUniform("objectColour", colour);}
+        this.setUniform("texture", texture)
+        this.setUniform("objectColour", colour?colour:this.defaultColour)
+        const fogUniformData = fogData?fogData:this.defaultFogData
+        this.setUniform('fogColour', fogUniformData.fogColour)
+        this.setUniform('fogDensity', fogUniformData.fogDensity)
+        this.setUniform('fogStart', fogUniformData.fogStart)
+    }  
+    
 
     setUniform(name, value) {
         if (this.uniforms[name])this.uniforms[name].value = value;
-        else console.error('Uniform does not exist');
     }
 
     /**
      * apply uniforms
      * @param {} gl 
      */
-    update(gl) {
+    update(gl, camera, light=null) {
         this.shader.use(gl)
- 
+
+        this.setUniform('projectionMatrix', camera.projectionMatrix)
+        this.setUniform('modelViewMatrix', camera.viewMatrix)
+        this.setUniform('cameraPosition', camera.position)
+        if(light){
+            this.setUniform("lightPosition", light.transform.position)
+            this.setUniform("lightColour", light.colour)
+        }
+
         let textureIndex = 0;
 
         for (let uniformName in this.uniforms) {
             const uniform = this.uniforms[uniformName];
             const loc = uniform.location;
             const val = uniform.value;
-            
             if (loc !== null && val !== null) {
                 switch (uniform.type) {
                     case 'mat4':
@@ -55,7 +67,9 @@ class MaterialInstance {
                         gl.uniform4fv(loc, val);
                         break;
                     case 'texture':
+                        val.Bind(textureIndex);
                         gl.uniform1i(loc, textureIndex);
+                        textureIndex++;
                         break;
                     default:
                         console.warn(`Unsupported uniform type for ${uniformName}.`);
@@ -66,4 +80,4 @@ class MaterialInstance {
 }
 
 
-export default MaterialInstance
+export default cMaterial

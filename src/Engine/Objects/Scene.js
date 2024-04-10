@@ -4,18 +4,17 @@ import PointLight from "./PointLight.js"
 import MeshLoader from "../Utils/MeshLoader.js"
 
 class Scene {
-    constructor(gl, camera, light, materials){
+    constructor(gl, camera, lights, shaders){
         this.gl = gl
         this.camera = camera
-        this.light = light
-        this.materials = materials
+        this.lights = lights
+        this.shaders = shaders.concat(this.lights.map(l=>l.shader))
         this.meshLoader = new MeshLoader()
-        this.entityList = []
-        
+        this.entityList = []        
     }
 
     init(){    
-        return Promise.all(this.materials.map(m => m.load(this.gl)))
+        return Promise.all(this.shaders.map(s => s.load(this.gl))).then(() => this.lights.map(l => l.load(this.gl)))
     }
 
     /**
@@ -25,12 +24,9 @@ class Scene {
     addObject(obj, colour=null){
         switch(obj.constructor){
             case Entity:
-                obj.init(this.gl, this.camera)
-                
-                obj.mesh.material.setUniform("lightPosition", this.light.transform.position)
-                obj.mesh.material.setUniform("lightColour", this.light.colour)
+                obj.init(this.gl)
                 if(colour)obj.mesh.material.setColour(colour)
-
+                             
                 this.entityList.push(obj)
                 break
             case PointLight:
@@ -61,8 +57,8 @@ class Scene {
 
     render(){
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT); 
-        this.entityList.forEach(e=>e.draw(this.gl, this.camera))
-      
+        this.entityList.forEach(e=>e.draw(this.gl, this.camera, this.lights))
+        this.lights.forEach(l=>l.entity.drawLight(this.gl, this.camera))
     }
 }
 

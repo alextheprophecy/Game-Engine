@@ -7,18 +7,15 @@ uniform mat4 transformationMatrix;
 uniform vec3 objectColour;
 
 in vec3 position;
-in vec3 normal; // New input for vertex normal
 
 out vec3 vColour;
-out vec3 vNormal;
 out vec3 vPosition;
 
 void main() {
     vColour = objectColour;
-    vNormal = (transpose(inverse(transformationMatrix))*vec4(normal,1.0)).xyz;
 
-    vec4 worldPosition = transformationMatrix * vec4(position, 1.0);
+    vec4 worldPosition = modelViewMatrix*transformationMatrix * vec4(position, 1.0);
     vPosition = worldPosition.xyz; 
     
-    gl_Position = projectionMatrix*modelViewMatrix*worldPosition;
+    gl_Position = projectionMatrix*worldPosition;
 }

@@ -2,13 +2,12 @@
 precision highp float;
 
 in vec3 vPosition;
-in vec3 vColour;
 in vec3 vNormal;
 in vec2 vTexCoord;
 
 // Uniforms
-uniform vec3 lightPosition; // Position of the point light
-uniform vec3 lightColour; // Color of the point light
+uniform vec3 lightPosition[8]; // max 8 different light sources
+uniform vec3 lightColour[8]; 
 uniform vec3 cameraPosition;
 
 uniform vec4 u_fogColour;
@@ -26,37 +25,39 @@ out vec4 fragColour;
 void main()
 {
     float ambientStrength = 0.2;
-    vec3 ambient = ambientStrength * lightColour;
-
-    
     float diffuseStrength = 0.8;
-    vec3 norm = normalize(vNormal);
-    vec3 lightDir = normalize(lightPosition - vPosition);  
-    float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diffuseStrength * diff * lightColour;
-
     float specularStrength = 0.3;
-    //vec3 reflectDir = reflect(-lightDir, norm);
+
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+
+    vec3 norm = normalize(vNormal);
     vec3 viewDir = normalize(cameraPosition - vPosition);
 
-    vec3 halfwayDir = normalize(lightDir + viewDir);  
+    //calculate lighting for each light
+    for(int i = 0; i < 8; i++) {
+        ambient += ambientStrength * lightColour[i];        
+    
+        vec3 lightDir = normalize(lightPosition[i] - vPosition);  
+        float diff = max(dot(norm, lightDir), 0.0);
+        diffuse += diffuseStrength * diff * lightColour[i];
 
-    float spec = pow(max(dot(norm, halfwayDir), 0.0), 32.0);
-    //float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
+        vec3 halfwayDir = normalize(lightDir + viewDir);  
+        float spec = pow(max(dot(norm, halfwayDir), 0.0), 32.0);
+        specular += specularStrength * spec * lightColour[i];   
+    }
 
-    vec3 specular = specularStrength * spec * lightColour;   
-
+    //sample texture colour
     vec3 textColour = texture(u_texture, vTexCoord).xyz;
-
     vec3 result = (ambient+diffuse) * textColour + specular;
     vec4 tfragColour = vec4(result, 1);
 
-    float fogDistance = length(vPosition);
-
+    //calculate fog
+    float fogDistance = length(vPosition-cameraPosition);
     float linearFog = smoothstep(u_fogStart, u_fogStart+5.0, fogDistance);
-
-
     float fogAmount = 1.0 - exp2(-u_fogDensity * u_fogDensity * fogDistance * fogDistance * LOG2);
     fogAmount = clamp(fogAmount, 0., 1.);
+
     fragColour = mix(tfragColour, u_fogColour, fogAmount*linearFog);  
 }  

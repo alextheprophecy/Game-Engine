@@ -6,47 +6,61 @@ in vec3 vColour;
 in vec3 vNormal;
 
 // Uniforms
-uniform vec3 lightPosition; // Position of the point light
-uniform vec3 lightColour; // Color of the point light
+uniform vec3 lightPosition[8]; // max 8 different light sources
+uniform vec3 lightColour[8]; 
 uniform vec3 cameraPosition;
 
 uniform vec4 u_fogColour;
 uniform float u_fogDensity;
 uniform float u_fogStart;
 
+uniform sampler2D u_texture;
 
 out vec4 fragColour;
 
 #define LOG2 1.442695
 
 
+
 void main()
 {
     float ambientStrength = 0.2;
-    vec3 ambient = ambientStrength * lightColour;
+    float diffuseStrength = 0.8;
+    float specularStrength = 0.3;
 
-    
-    float diffuseStrength = 2.0;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+
     vec3 norm = normalize(vNormal);
-    vec3 lightDir = normalize(lightPosition - vPosition);  
-    float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diffuseStrength * diff * lightColour;
-
-
-    float specularStrength = 1.7;
     vec3 viewDir = normalize(cameraPosition - vPosition);
-    vec3 halfwayDir = normalize(lightDir + viewDir);  
-    float spec = pow(max(dot(norm, halfwayDir), 0.0), 32.0);
-    vec3 specular = specularStrength * spec * lightColour;   
-    
 
-    vec3 result = (ambient+diffuse) * vColour;
+    //calculate lighting for each light
+    for(int i = 0; i < 8; i++) {
+        ambient += ambientStrength*lightColour[i];        
+    
+        vec3 lightDir = normalize(lightPosition[i] - vPosition);  
+        float diff = max(dot(norm, lightDir), 0.0);
+        diffuse += diffuseStrength * diff * lightColour[i];
+
+        vec3 halfwayDir = normalize(lightDir + viewDir);  
+        float spec = pow(max(dot(norm, halfwayDir), 0.0), 32.0);
+        specular += specularStrength* spec * lightColour[i];   
+    }
+
+    //ambient = normalize(ambient) * ambientStrength;
+    //diffuse = normalize(diffuse) * diffuseStrength;
+    //specular = normalize(specular) * specularStrength;
+
+    //sample texture colour
+    vec3 result = (ambient+diffuse) * vColour + specular;
     vec4 tfragColour = vec4(result, 1);
 
-    float fogDistance = length(vPosition);
+    //calculate fog
+    float fogDistance = length(vPosition-cameraPosition);
     float linearFog = smoothstep(u_fogStart, u_fogStart+5.0, fogDistance);
     float fogAmount = 1.0 - exp2(-u_fogDensity * u_fogDensity * fogDistance * fogDistance * LOG2);
-    fogAmount = clamp(fogAmount, 0., 1.0);
+    fogAmount = clamp(fogAmount, 0., 1.);
 
-    fragColour = tfragColour;// mix(tfragColour, u_fogColour, fogAmount*linearFog);  
+    fragColour = mix(tfragColour, u_fogColour, fogAmount*linearFog);  
 }  

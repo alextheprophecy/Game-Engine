@@ -1,5 +1,4 @@
 import Material from "../Engine/Shaders/Material.js";
-import CubeMesh from "../Engine/Geometry/CubeMesh.js";
 import Camera from "../Engine/Objects/Camera.js";
 import Transform from "../Engine/Geometry/Transform.js";
 import MeshLoader from "../Engine/Utils/MeshLoader.js";
@@ -7,6 +6,8 @@ import PointLight from "../Engine/Objects/PointLight.js";
 import Scene from "../Engine/Objects/Scene.js";
 import Terrain from "../Engine/Objects/Terrain.js";
 import Texture from "../Engine/Shaders/Texture.js";
+import Shader from "../Engine/Shaders/Shader.js";
+
 const { mat4, mat3, vec2, vec3, vec4, quat} = glMatrix;
 
 setup();  
@@ -28,29 +29,38 @@ function setup() {
 function main(gl, canvas) { 
     
     const camera = new Camera(canvas)
-    
-    const materials = []
-    const material1 = new Material("../Resources/Shaders/vertshader.vs.glsl", "../Resources/Shaders/fragshader.fs.glsl")
-    const materialText = new Material("../Resources/Shaders/textured.vs.glsl", "../Resources/Shaders/textured.fs.glsl")
-    const terrainMat = new Material("../Resources/Shaders/terrain.vs.glsl", "../Resources/Shaders/textured.fs.glsl")
-    materials.push(material1, materialText, terrainMat)
 
-    const pointLight = new PointLight(new Transform([3,0,3]), 2, [1,1,1])
+    const pointLight = new PointLight(new Transform([0,3,0]), 2, [1,0,0])
+    const pointLight2 = new PointLight(new Transform([-5,0,5]), 2, [0,1,0.5])
+    const lights = [pointLight, pointLight2]
 
-    const scene = new Scene(gl, camera, pointLight, materials)
+    const sh1 = new Shader("../Resources/Shaders/vertshader.vs.glsl", "../Resources/Shaders/fragshader.fs.glsl")
+    const shTextured = new Shader("../Resources/Shaders/textured.vs.glsl", "../Resources/Shaders/textured.fs.glsl")
+    const shTerrain = new Shader("../Resources/Shaders/terrain.vs.glsl", "../Resources/Shaders/terrain.fs.glsl")
+    const shaders = [sh1, shTextured, shTerrain]
+
+
+    const scene = new Scene(gl, camera, lights, shaders)
 
     scene.init().then(()=>{        
         setUpInputListeners(camera, canvas)
-        const texture = new Texture("../Resources/Textures/Texture.jpg").load(gl)
-        const terrain = new Terrain(10,10,1.5)
-        let a = null
-        scene.createEntity(terrain.getMesh(gl), terrainMat, new Transform([-5,-1,-5]), [1,1,1])
-        //scene.createEntity(new CubeMesh(gl), materialText, new Transform([-2,0,2]), [0,0,1])
-        scene.createEntity('../Resources/Models/croissant.obj', materialText, new Transform([0,1,0])).then(e=>a=e)
-        //scene.createEntity('../Resources/Models/Tree02.obj', materialText, new Transform([5,-1,0]), [1,1,0])
 
+        const textureP = new Texture("../Resources/Textures/Texture.jpg").load(gl)
+        const terrainMat = new Material(shTerrain)
+        const texturedMat = new Material(shTextured)
+        
+        const terrain = new Terrain(200,200,1)
+        scene.createEntity(terrain.getMesh(gl), terrainMat, new Transform([-50,-2,-50]), [1,1,1])
+
+        let croissant = null
+        scene.createEntity('../Resources/Models/croissant.obj', texturedMat,  new Transform([0,0,0])).then(e=>{
+            camera.setFocus(e)
+            croissant=e
+        })
+        //scene.createEntity('../Resources/Models/Tree02.obj', texturedMat, new Transform([5,-2,0]))
+        
         var animate = function(time) {
-            //if(a)a.transform.rotate(0,1,0)
+            pointLight.transform.translate(0.2*Math.sin(time*0.002), 0, 0.2*Math.cos(time*0.002))
             scene.render()
             window.requestAnimationFrame(animate);
         }
@@ -58,7 +68,7 @@ function main(gl, canvas) {
     })
 
     function setUpInputListeners(camera, canvas){
-        document.addEventListener("keypress", function(event) {
+        document.addEventListener("keydown", function(event) {
             camera.keyPress(event)
         });
         
@@ -68,13 +78,19 @@ function main(gl, canvas) {
         document.addEventListener('pointerlockchange', ()=>{
             if(document.pointerLockElement === canvas) {
                 document.addEventListener("mousemove", move, false);
+                document.addEventListener("wheel", scroll, false);
+                
             } else {
-              document.removeEventListener("mousemove",move, false);
+                document.removeEventListener("mousemove",move, false);
+                document.removeEventListener("wheel",scroll, false);
             }
         }, false);
              
         function move(e){
             camera.mouseMove(e)
+        }
+        function scroll(e){
+            camera.scroll(e)
         }
     }
 

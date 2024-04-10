@@ -91,7 +91,7 @@ class MeshLoader{
         const mesh = new Mesh(false)
         mesh.bufferData(gl, normals, 3, "normals")
         mesh.bufferData(gl, positions.map(p=>p*scale), 3, "positions")
-        mesh.bufferData(gl, uvs.map((u,i)=>i%2==0?u:1-u), 2, "uvs") //weird bug, every second uv is flipped (1-uv)
+        mesh.bufferData(gl, uvs.map((u,i)=>i%2==0?u:1-u), 2, "uvs") //weird bug, fix: every second uv is flipped (1-uv)
         return mesh
     }
 
