@@ -64,6 +64,8 @@ class Shader {
       uvs: gl.getAttribLocation(this.shaderProgram, 'uv0'),
       colours: gl.getAttribLocation(this.shaderProgram, 'colour'),
       normals: gl.getAttribLocation(this.shaderProgram, 'normal'),
+      m_transforms: gl.getAttribLocation(this.shaderProgram, 'm_transform'),
+      m_transformss: gl.getAttribLocation(this.shaderProgram, 'm_transform2'),
     };
 
     this.uniforms = {
@@ -83,9 +85,13 @@ class Shader {
         type: 'mat4',
         location: gl.getUniformLocation(this.shaderProgram, 'transformationMatrix'),
       },
-      lightPosition: {
+      lightPositions: {
         type: 'vec3',
-        location: gl.getUniformLocation(this.shaderProgram, 'lightPosition'),
+        location: gl.getUniformLocation(this.shaderProgram, 'lightPositions'),
+      },
+      lightColours: {
+        type: 'vec4',
+        location: gl.getUniformLocation(this.shaderProgram, 'lightColours'),
       },
       lightColour: {
         type: 'vec3',

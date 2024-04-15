@@ -2,6 +2,7 @@ import Mesh from "../Geometry/Mesh.js"
 import Entity from "./Entity.js"
 import PointLight from "./PointLight.js"
 import MeshLoader from "../Utils/MeshLoader.js"
+import GrassArea from "./GrassArea.js"
 
 class Scene {
     constructor(gl, camera, lights, shaders){
@@ -10,11 +11,19 @@ class Scene {
         this.lights = lights
         this.shaders = shaders.concat(this.lights.map(l=>l.shader))
         this.meshLoader = new MeshLoader()
-        this.entityList = []        
+        this.entityList = []   
+        this.renderModeTriangles = true     
     }
 
     init(){    
         return Promise.all(this.shaders.map(s => s.load(this.gl))).then(() => this.lights.map(l => l.load(this.gl)))
+    }
+
+    keyPress(event){
+        if (event.code === "ShiftLeft") {  
+            this.renderModeTriangles = !this.renderModeTriangles
+        }else if (event.key === "d") {
+        }
     }
 
     /**
@@ -31,7 +40,7 @@ class Scene {
                 break
             case PointLight:
                 console.warn("not yet implemented multiple lights in scene")
-                break                
+                break 
         }
     }
 
@@ -57,7 +66,7 @@ class Scene {
 
     render(){
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT); 
-        this.entityList.forEach(e=>e.draw(this.gl, this.camera, this.lights))
+        this.entityList.forEach(e=>e.draw(this.gl, this.camera, this.lights, this.renderModeTriangles?this.gl.TRIANGLES:this.gl.LINES))
         this.lights.forEach(l=>l.entity.drawLight(this.gl, this.camera))
     }
 }

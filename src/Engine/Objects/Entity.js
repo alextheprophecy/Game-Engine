@@ -13,11 +13,11 @@ class Entity {
         this.mesh.bind(gl, this.material)
     }
 
-    draw(gl, camera, lights){
+    draw(gl, camera, lights, renderMode){
         if(!this.mesh.material)console.log("!!Warning!! initialise entity to setup material instance for mesh")  
         this.mesh.material.setUniform('transformationMatrix', this.transform.transformationMatrix())
         this.mesh.material.update(gl, camera, lights)
-        this.mesh.draw(gl)
+        this.mesh.draw(gl, renderMode)
     }
 
     drawLight(gl, camera){

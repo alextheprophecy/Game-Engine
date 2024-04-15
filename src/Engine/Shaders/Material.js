@@ -1,6 +1,6 @@
 class Material {
     defaultColour = [0.8,0.2,0.42]
-    defaultFogData = {'fogColour': [0.8, 0.8, 1, 1], 'fogDensity': 0.045, 'fogStart': 9.0}
+    defaultFogData = {'fogColour': [0.05,0,0.1, 1], 'fogDensity': 0.025, 'fogStart': 0}//'fogColour': [0.8, 0.8, 1, 1]
 
     constructor(shader, colour =null, texture=null, fogData = null) {
         this.shader = shader 
@@ -14,8 +14,8 @@ class Material {
                     value : null
                 }
             }
-        }       
-        
+        }     
+
         this.setUniform("texture", texture)
         this.setColour(colour?colour:this.defaultColour)
         const fogUniformData = fogData?fogData:this.defaultFogData
@@ -43,9 +43,10 @@ class Material {
         }
         //TODO: remove these they are called when creating entity in scene
         if(lights){
-            this.setUniform("lightPosition", lights.map(l=>l.transform.position).flat())
-            this.setUniform("lightColour", lights.map(l=>l.colour).flat())
+            this.setUniform("lightPositions", lights.map(l=>l.transform.position).flat())
+            this.setUniform("lightColours", lights.map(l=>l.colour.concat(l.brightness)).flat())
         }
+        
 
         let textureIndex = 0;
 
@@ -53,7 +54,7 @@ class Material {
             const uniform = this.uniforms[uniformName];
             const loc = uniform.location;
             const val = uniform.value;
-            
+
             if (loc !== null && val !== null) {
                 switch (uniform.type) {
                     case 'mat4':
@@ -72,7 +73,9 @@ class Material {
                         gl.uniform4fv(loc, val);
                         break;
                     case 'texture':
+                        val.bind(gl, 0)
                         gl.uniform1i(loc, textureIndex);
+                        textureIndex++;                       
                         break;
                     default:
                         console.warn(`Unsupported uniform type for ${uniformName}.`);

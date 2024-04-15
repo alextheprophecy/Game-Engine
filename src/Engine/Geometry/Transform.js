@@ -18,11 +18,35 @@ class Transform{
         this.position[2]+=z
     }
 
+    translateAlong(x,y,z,forwardDir,rightDir,upDir=[0,1,0]){
+        
+    }
+    
+    follow(transformOther, positionOffset, rotationOffset = null){
+        const f = transformOther.forward()
+        const r = transformOther.right()
+        const offset = [f[0]*positionOffset[2] + r[0]*positionOffset[0],
+            positionOffset[1], f[2]*positionOffset[2] + r[2]*positionOffset[0]]          
+        vec3.add(this.position, transformOther.position, offset)      
+        if(rotationOffset)vec3.add(this.rotation, transformOther.rotation, rotationOffset)  
+    }
+
     forward(){
         const f = vec3.create()
-        vec3.rotateY(f, [0,0,1],[0,0,0], glMatrix.glMatrix.toRadian(this.rotation[1]))
+        vec3.rotateY(f, [0,0,1], [0,0,0], glMatrix.glMatrix.toRadian(this.rotation[1]))
+        vec3.rotateX(f, f, [0,0,0], glMatrix.glMatrix.toRadian(this.rotation[0]))
+        vec3.rotateZ(f, f, [0,0,0], glMatrix.glMatrix.toRadian(this.rotation[2]))
         return vec3.normalize(f, f)
     }
+
+    right(){
+        const f = vec3.create()
+        vec3.rotateY(f, [-1,0,0], [0,0,0], glMatrix.glMatrix.toRadian(this.rotation[1]))
+        vec3.rotateZ(f, f, [0,0,0], glMatrix.glMatrix.toRadian(this.rotation[2]))
+        return vec3.normalize(f, f)
+    }
+
+
 
     transformationMatrix(){
         const out = mat4.create()        

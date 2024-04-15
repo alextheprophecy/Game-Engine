@@ -38,9 +38,13 @@ class Camera {
         
         this.target = this.focusEntity.transform.position;
         const rotateSpeed = 7
-        if (event.key === "a") {                
+        if (event.key === "a") {  
+            //const f = this.focusEntity.transform.right()              
+            //this.focusEntity.transform.translate(-f[0], -f[1], -f[2]);
             this.focusEntity.transform.rotate(0,rotateSpeed,0);
         }else if (event.key === "d") {
+            //const f = this.focusEntity.transform.right()
+            //this.focusEntity.transform.translate(f[0], f[1], f[2]);
             this.focusEntity.transform.rotate(0,-rotateSpeed,0);
         }
         
@@ -76,7 +80,7 @@ class Camera {
     scroll(event){
         const delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
 
-        this.distance=Math.max(2,Math.min(20,this.distance-delta))
+        this.distance=Math.max(2,Math.min(50,this.distance-delta))
 
         vec3.add(this.position, this.target,[this.distance*Math.sin(this.sumX)*Math.cos(this.sumY),
             this.distance* Math.sin(this.sumY),

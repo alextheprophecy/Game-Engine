@@ -5,20 +5,25 @@ uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 transformationMatrix;
 
+in vec3 colour;
+in vec3 offset;
 in vec3 position;
-in vec3 normal; // New input for vertex normal
-in vec2 uv0;
+in mat4 m_transform;
+in vec3 normal; 
+
+
 
 out vec3 vNormal;
 out vec3 vPosition;
-out vec2 vTexCoord;
+out vec3 vColour;
 
 void main() {
-    vNormal = (transpose(inverse(transformationMatrix))*vec4(normal,1.0)).xyz;
-    vTexCoord = uv0;
+    vColour =colour;
 
-    vec4 worldPosition = transformationMatrix * vec4(position, 1.0);
-    vPosition = worldPosition.xyz; 
+    vNormal = (transpose(inverse(transformationMatrix))*vec4(normal,1.0)).xyz;
+
+    vec4 worldPosition = transformationMatrix*m_transform*vec4(position, 1.0);
+    vPosition = worldPosition.xzy; 
     
     gl_Position = projectionMatrix*modelViewMatrix*worldPosition;
 }

@@ -4,7 +4,6 @@ precision highp float;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 transformationMatrix;
-uniform vec3 objectColour;
 
 in vec3 position;
 in vec3 normal; // New input for vertex normal
@@ -61,11 +60,10 @@ void main() {
 
 
     vec3 cNormal = normalize(cross(top,left)+cross(left,bottom)+cross(bottom,right)+cross(right,top));
-    vNormal = vec3(0,1,0);//(transpose(inverse(transformationMatrix))*vec4(cNormal,0.0)).xyz;
-    vColour = objectColour;
+    vNormal = normal;//(transpose(inverse(transformationMatrix))*vec4(cNormal,0.0)).xyz;
     vTexCoord = uv0;
 
-    vec4 worldPosition = transformationMatrix * vec4(height(position.xz), 1.0);
+    vec4 worldPosition = transformationMatrix * vec4(position, 1.0);//vec4(height(position.xz), 1.0);
     vPosition = worldPosition.xyz; 
     
     gl_Position = projectionMatrix*modelViewMatrix*worldPosition;//+ vec4(height(position.xz),0);

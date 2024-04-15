@@ -24,21 +24,22 @@ class Texture {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
            
-            //gl.bindTexture(gl.TEXTURE_2D, null);
+            gl.bindTexture(gl.TEXTURE_2D, null);
         };
+        return this
+    }
+  
+    bind(gl, index) {
+      if (!this.texture) {
+        return;
       }
-    
-      bind(index) {
-        if (!this.texture) {
-          return;
-        }
-        gl.activeTexture(gl.TEXTURE0 + index);
-        gl.bindTexture(gl.TEXTURE_2D, this.texture);
-      }
-    
-      unBind() {
-        gl.bindTexture(gl.TEXTURE_2D, null);
-      }
+      gl.activeTexture(gl.TEXTURE0 + index);
+      gl.bindTexture(gl.TEXTURE_2D, this.texture);
+    }
+  
+    unBind() {
+      gl.bindTexture(gl.TEXTURE_2D, null);
+    }
 }
 
 export default Texture

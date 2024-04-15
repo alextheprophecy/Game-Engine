@@ -2,18 +2,18 @@
 precision highp float;
 
 in vec3 vPosition;
-in vec3 vColour;
 in vec3 vNormal;
 
 // Uniforms
-uniform vec3 lightPosition[8]; // max 8 different light sources
-uniform vec3 lightColour[8]; 
+uniform vec3 lightPositions[8]; // max 8 different light sources
+uniform vec4 lightColours[8]; 
 uniform vec3 cameraPosition;
 
 uniform vec4 u_fogColour;
 uniform float u_fogDensity;
 uniform float u_fogStart;
 
+uniform vec3 objectColour;
 uniform sampler2D u_texture;
 
 out vec4 fragColour;
@@ -24,7 +24,10 @@ out vec4 fragColour;
 
 void main()
 {
-    float ambientStrength = 0.2;
+
+
+
+    float ambientStrength = 0.05;
     float diffuseStrength = 0.8;
     float specularStrength = 0.3;
 
@@ -37,15 +40,20 @@ void main()
 
     //calculate lighting for each light
     for(int i = 0; i < 8; i++) {
-        ambient += ambientStrength*lightColour[i];        
-    
-        vec3 lightDir = normalize(lightPosition[i] - vPosition);  
+        float lightRadius = lightColours[i].w;
+
+        float lightDist = distance(lightPositions[i], vPosition);
+        float att = 1.0 / (1.0 + 0.1*lightDist + 1.0/(lightRadius*lightRadius)*lightDist*lightDist);
+
+        ambient += ambientStrength*lightColours[i].xyz;        
+
+        vec3 lightDir = normalize(lightPositions[i] - vPosition);  
         float diff = max(dot(norm, lightDir), 0.0);
-        diffuse += diffuseStrength * diff * lightColour[i];
+        diffuse += att * diffuseStrength * diff * lightColours[i].xyz;
 
         vec3 halfwayDir = normalize(lightDir + viewDir);  
         float spec = pow(max(dot(norm, halfwayDir), 0.0), 32.0);
-        specular += specularStrength* spec * lightColour[i];   
+        specular += att * specularStrength* spec * lightColours[i].xyz;   
     }
 
     //ambient = normalize(ambient) * ambientStrength;
@@ -53,7 +61,7 @@ void main()
     //specular = normalize(specular) * specularStrength;
 
     //sample texture colour
-    vec3 result = (ambient+diffuse) * vColour + specular;
+    vec3 result = (ambient+diffuse) * objectColour + specular;
     vec4 tfragColour = vec4(result, 1);
 
     //calculate fog
