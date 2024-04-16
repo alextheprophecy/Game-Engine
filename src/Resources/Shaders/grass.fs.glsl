@@ -28,7 +28,7 @@ void main()
     pct = distance(st,vec2(0.5));
 
     float ambientStrength = 0.05*yPos*yPos;
-    float diffuseStrength = 0.8;
+    float diffuseStrength = 0.8;    
     float specularStrength = 0.2;
 
     vec3 ambient;

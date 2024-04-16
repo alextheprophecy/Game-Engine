@@ -25,7 +25,7 @@ out vec4 fragColour;
 void main()
 {
     float ambientStrength = 0.02;
-    float diffuseStrength = 0.8;
+    float diffuseStrength = 0.5;
     float specularStrength = 0.1;
 
     vec3 ambient;
@@ -69,5 +69,5 @@ void main()
     float fogAmount = 1.0 - exp2(-u_fogDensity * u_fogDensity * fogDistance * fogDistance * LOG2);
     fogAmount = clamp(fogAmount, 0., 1.);
 
-    fragColour = mix(tfragColour, u_fogColour, fogAmount*linearFog);  
+    fragColour = tfragColour;//mix(tfragColour, u_fogColour, fogAmount*linearFog);  
 }  

@@ -8,6 +8,7 @@ import Terrain from "../Engine/Objects/Terrain.js";
 import Texture from "../Engine/Shaders/Texture.js";
 import Shader from "../Engine/Shaders/Shader.js";
 import GrassArea from "../Engine/Objects/GrassArea.js";
+import SkyBox from "../Engine/Objects/SkyBox.js";
 
 const { mat4, mat3, vec2, vec3, vec4, quat} = glMatrix;
 
@@ -40,15 +41,15 @@ function main(gl, canvas) {
 
     const pointLight = new PointLight(new Transform([0,6,0]), 50.0, [1,0.7,0.4])
     const dirLight = new PointLight(new Transform([2,-1,0]), -0.4, [0.6,0.7,0.4])
-    const characterLight = new PointLight(new Transform([-10,2,0]),10, [1,1,1])
-    const lights = [pointLight, dirLight,characterLight]
+    const lights = [pointLight, dirLight]
 
     const sh1 = new Shader("../Resources/Shaders/vertshader.vs.glsl", "../Resources/Shaders/fragshader.fs.glsl")
     const shTextured = new Shader("../Resources/Shaders/textured.vs.glsl", "../Resources/Shaders/textured.fs.glsl")
     const shTerrain = new Shader("../Resources/Shaders/terrain.vs.glsl", "../Resources/Shaders/terrain.fs.glsl")
     const grassShader  = new Shader("../Resources/Shaders/grass.vs.glsl", "../Resources/Shaders/grass.fs.glsl")
+    const skyBoxShader  = new Shader("../Resources/Shaders/skybox.vs.glsl", "../Resources/Shaders/skybox.fs.glsl")
 
-    const shaders = [sh1, shTextured, shTerrain, grassShader]
+    const shaders = [sh1, shTextured, shTerrain, grassShader, skyBoxShader]
 
     const scene = new Scene(gl, camera, lights, shaders)
 
@@ -56,16 +57,23 @@ function main(gl, canvas) {
         setUpInputListeners(scene, canvas)
 
         //create textures and materials
-        const textureP = new Texture("../Resources/Textures/palette.jpg").load(gl)
-        const textureC = new Texture("../Resources/Textures/Texture.jpg").load(gl)
-        const textureG = new Texture("../Resources/Textures/grassTex.png").load(gl)
+        const textureP = new Texture("../Resources/Textures/palette.jpg").loadAsTexture(gl)
+        const textureC = new Texture("../Resources/Textures/Texture.jpg").loadAsTexture(gl)
+        const textureG = new Texture("../Resources/Textures/grassTex.png").loadAsTexture(gl)
+        const textureSkyBox = new Texture(["../Resources/Textures/CubeMap/pos-x.jpg", "../Resources/Textures/CubeMap/neg-x.jpg",
+            "../Resources/Textures/CubeMap/pos-y.jpg", "../Resources/Textures/CubeMap/neg-y.jpg",
+            "../Resources/Textures/CubeMap/pos-z.jpg", "../Resources/Textures/CubeMap/neg-z.jpg"]).loadAsCubeMap(gl)
 
         const terrainMat = new Material(shTerrain, [0.1,0.25,0], null)
         const croissantMat = new Material(shTextured, [1,1,1], textureC)
         const treeMat = new Material(shTextured, [1,1,1], textureP, [0.05, 0.3, 0.1])
         const grassMat = new Material(grassShader, [1,1,1], textureG)
-
+        const skyBoxMat = new Material(skyBoxShader, [1,1,1])
+        
         //add entitites to the scene
+        const skyBox = new SkyBox()
+        skyBox.init(gl, skyBoxMat, textureSkyBox)
+
         const terrain = new Terrain(200,200,1)
         scene.createEntity(terrain.getMesh(gl), terrainMat, new Transform([-50,-2,-50]))
 
@@ -73,9 +81,10 @@ function main(gl, canvas) {
 
         let croissant = null
         scene.createEntity('../Resources/Models/croissant.obj', croissantMat,  new Transform([0,0,0])).then(e=>{
-            camera.setFocus(e)
+            camera.setFocus(e, [0,2,0])
             croissant=e
         })
+
         scene.createEntity('../Resources/Models/Tree02.obj', treeMat, new Transform([15,-2,-5]))
         
         let then = 0;
@@ -84,11 +93,12 @@ function main(gl, canvas) {
         var loop = function(time) {
             gl.clear(gl.COLOR_BUFFER_BIT);
 
-            if(croissant)characterLight.transform.follow(croissant.transform, [0,1,5])
+            //if(croissant)characterLight.transform.follow(croissant.transform, [0,2,5])
             pointLight.transform.translate(0.2*Math.sin(time*0.002), 0, 0.2*Math.cos(time*0.002))
 
             scene.render()
             grass.render(time, camera, lights)
+            skyBox.render(camera)
 
             /*time *= 0.001;                          // convert to seconds
             const deltaTime = time - then;          // compute time since last frame

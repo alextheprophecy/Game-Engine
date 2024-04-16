@@ -124,6 +124,14 @@ class Shader {
       time: {
         type: 'float',
         location: gl.getUniformLocation(this.shaderProgram, 'time'),
+      },
+      skyBox: {
+        type: 'skyBox',
+        location: gl.getUniformLocation(this.shaderProgram, 'skybox'),
+      },
+      viewDirectionProjectionInverse: {
+        type: 'mat4',
+        location: gl.getUniformLocation(this.shaderProgram, 'viewDirectionProjectionInverse'),
       }
     };
   }

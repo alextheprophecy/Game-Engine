@@ -52,15 +52,7 @@ float delta = 0.1;
 
 
 void main() {
-    //vColour = objectColour;
-    vec3 top =  height(vec2(position.x, position.z-delta))-height(position.xz);
-    vec3 bottom =  height(vec2(position.x, position.z+delta))-height(position.xz);
-    vec3 left =  height(vec2(position.x-delta, position.z))-height(position.xz);
-    vec3 right =  height(vec2(position.x+delta, position.z))-height(position.xz);
-
-
-    vec3 cNormal = normalize(cross(top,left)+cross(left,bottom)+cross(bottom,right)+cross(right,top));
-    vNormal = normal;//(transpose(inverse(transformationMatrix))*vec4(cNormal,0.0)).xyz;
+    vNormal = normal;
     vTexCoord = uv0;
 
     vec4 worldPosition = transformationMatrix * vec4(position, 1.0);//vec4(height(position.xz), 1.0);

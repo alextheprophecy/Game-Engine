@@ -1,7 +1,7 @@
 class Material {
     defaultColour = [0.8,0.2,0.42]
     defaultFogData = {'fogColour': [0.05,0,0.1, 1], 'fogDensity': 0.025, 'fogStart': 0}//'fogColour': [0.8, 0.8, 1, 1]
-    defaultMaterialProperties = [0.05, 0.8, 0.2]
+    defaultMaterialProperties = [0.06, 1, 0.2]
 
     constructor(shader, colour =this.defaultColour, texture=null, materialProperties=this.defaultMaterialProperties, fogData = null) {
         this.shader = shader 
@@ -76,7 +76,12 @@ class Material {
                         gl.uniform4fv(loc, val);
                         break;
                     case 'texture':
-                        val.bind(gl, 0)
+                        val.bind(gl, textureIndex)
+                        gl.uniform1i(loc, textureIndex);
+                        textureIndex++;                       
+                        break;
+                    case 'skyBox':
+                        val.bind(gl, textureIndex, true)
                         gl.uniform1i(loc, textureIndex);
                         textureIndex++;                       
                         break;

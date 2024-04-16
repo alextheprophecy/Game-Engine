@@ -25,19 +25,26 @@ class Camera {
             this.sumY = 0
         } 
         vec3.add(this.position, this.target,[this.distance*Math.sin(this.sumX)*Math.cos(this.sumY),
-            this.distance* Math.sin(this.sumY),
+            Math.max(-2, this.distance* Math.sin(this.sumY)),
             this.distance*Math.cos(this.sumX)*Math.cos(this.sumY)
         ] )
 
         const up = [0, 1, 0]; // Up vector
-        //this.viewMatrix = [1,0,1,1]
         mat4.lookAt(this.viewMatrix, this.position, this.target, up);
+    }
+
+    getViewDirProjInvMat(){
+        const viewMatrix = mat4.clone(this.viewMatrix)
+        viewMatrix[12] = 0;
+        viewMatrix[13] = 0;
+        viewMatrix[14] = 0;
+        mat4.multiply(viewMatrix, this.projectionMatrix, viewMatrix);
+        mat4.invert(viewMatrix, viewMatrix)
+        return viewMatrix
     }
 
     keyPress(event){
         if(!this.focusEntity)return
-        
-        this.target = this.focusEntity.transform.position;
         const rotateSpeed = 7
         if (event.key === "a") {  
             //const f = this.focusEntity.transform.right()              
@@ -57,6 +64,7 @@ class Camera {
             this.focusEntity.transform.translate(-f[0], -f[1], -f[2]);
 
         }
+        vec3.add(this.target, this.focusEntity.transform.position, this.focusOffset)
         this.recalculate()
     }
 
@@ -73,8 +81,7 @@ class Camera {
         const rotSpeed = 0.1
         const pi = 3.1
         this.sumX -= (dx *rotSpeed)%(2*pi)
-        this.sumY = Math.min(Math.max(0,this.sumY+dy*rotSpeed),pi/2) //clamp sumy between 0 and 90 deg        
-     
+        this.sumY = Math.min(Math.max(-0.3,this.sumY+dy*rotSpeed),pi/2) //clamp sumy between 0 and 90 deg        
         this.recalculate()
     }
 
@@ -83,15 +90,18 @@ class Camera {
 
         this.distance=Math.max(2,Math.min(50,this.distance-delta))
 
-        vec3.add(this.position, this.target,[this.distance*Math.sin(this.sumX)*Math.cos(this.sumY),
+        vec3.add(this.position, this.target, [this.distance*Math.sin(this.sumX)*Math.cos(this.sumY),
             this.distance* Math.sin(this.sumY),
             this.distance*Math.cos(this.sumX)*Math.cos(this.sumY)
         ] )
         this.recalculate()
     }
 
-    setFocus(entity){
+    setFocus(entity, offset){
+        this.focusOffset = offset
         this.focusEntity = entity
+        vec3.add(this.target, this.focusEntity.transform.position, this.focusOffset)
+        this.recalculate()
     }
 
     getMouseMovement(e){

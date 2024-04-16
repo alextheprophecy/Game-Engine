@@ -35,7 +35,7 @@ void main()
     vec3 diffuse;
     vec3 specular;
 
-    vec3 norm = normalize(vNormal);
+    vec3 norm = vNormal;
     vec3 viewDir = normalize(cameraPosition - vPosition);
 
     //calculate lighting for each light
@@ -52,6 +52,7 @@ void main()
             lightDir = -lightPositions[i];
         }
 
+        
         
 
         ambient += ambientStrength*lightColours[i].xyz;        

@@ -30,8 +30,7 @@ class Mesh {
   
     bind(gl, material=null) {
         if(!this.material)this.material = material
-        gl.bindBuffer(gl.ARRAY_BUFFER, null);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+        
         for (let k in this.buffers) {
             if (material.attributes[k] == -1) continue
             const b = this.buffers[k]
@@ -60,11 +59,11 @@ class Mesh {
                 
             }
         }
+        this.isBound = true
     }
   
     draw(gl, mode=gl.TRIANGLES) {
         this.bind(gl, this.material)
-        this.material.shader.use(gl)
         const vertexCount = this.vertexCount
         if(this.drawWithIndices) gl.drawElements(mode, vertexCount, gl.UNSIGNED_SHORT, 0);
         else gl.drawArrays(mode, 0, vertexCount)
@@ -72,7 +71,6 @@ class Mesh {
 
     drawLight(gl) {
         this.bind(gl, this.material)
-        this.material.shader.use(gl)
         const vertexCount = this.vertexCount
         gl.drawElements(gl.TRIANGLES, vertexCount, gl.UNSIGNED_SHORT, 0);        
     }

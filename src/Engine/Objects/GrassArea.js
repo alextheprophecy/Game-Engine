@@ -112,7 +112,7 @@ class GrassArea {
             let xb = this.interp(x-xf, bl, br);
             let v = this.interp(y-yf, xt, xb);
             this.memory[[x,y]] = v;
-            return v;
+            return v*0.5;
         }
     }
 }

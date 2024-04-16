@@ -27,18 +27,16 @@ mat3 rotateXNScale(float theta, float scaleY) {
     );
 }
 
-
-
 void main() {
     yPos = position.y;
 
-    float scale = abs(instanceId)*1.5+ 0.7;
+    float scale = abs(instanceId)*3.0+ 0.7;
     
     vTexCoord = uv0;
     vNormal = (transpose(inverse(transformationMatrix*m_transform))*vec4(normal,1.0)).xyz;
 
     float rotationFactor = 0.05;
-    mat3 windMovement = rotateXNScale(sin(time * abs(instanceId)*5.0)*rotationFactor*scale*position.y, scale);
+    mat3 windMovement = rotateXNScale((0.25 + sin(time * abs(instanceId)*3.0))*rotationFactor*position.y*position.y, scale);
     
     vec4 worldPosition = transformationMatrix*m_transform*vec4(windMovement*position,1.0);
     vPosition = worldPosition.xyz; 
