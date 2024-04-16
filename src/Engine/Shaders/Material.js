@@ -1,8 +1,9 @@
 class Material {
     defaultColour = [0.8,0.2,0.42]
     defaultFogData = {'fogColour': [0.05,0,0.1, 1], 'fogDensity': 0.025, 'fogStart': 0}//'fogColour': [0.8, 0.8, 1, 1]
+    defaultMaterialProperties = [0.05, 0.8, 0.2]
 
-    constructor(shader, colour =null, texture=null, fogData = null) {
+    constructor(shader, colour =this.defaultColour, texture=null, materialProperties=this.defaultMaterialProperties, fogData = null) {
         this.shader = shader 
         this.attributes = {...this.shader.attributes}
         this.uniforms = {}
@@ -16,8 +17,10 @@ class Material {
             }
         }     
 
+        this.setColour(colour)
         this.setUniform("texture", texture)
-        this.setColour(colour?colour:this.defaultColour)
+        this.setUniform("materialProperties", materialProperties)
+
         const fogUniformData = fogData?fogData:this.defaultFogData
         this.setUniform('fogColour', fogUniformData.fogColour)
         this.setUniform('fogDensity', fogUniformData.fogDensity)

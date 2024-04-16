@@ -6,16 +6,17 @@ class Camera {
         this.position = [0,3,10]
         this.target = [0, 0, 0]// Camera target
         this.distance = 10
-        this.viewMatrix = mat4.create();
-        
-        this.recalculate()
-        const fov = Math.PI / 3; // 45 degrees
-        const aspectRatio = canvas.width / canvas.height; // Width divided by height
-        const near = 0.1; // Near clipping plane
-        const far = 100.0; // Far clipping plane
 
         this.projectionMatrix = mat4.create();
-        mat4.perspective(this.projectionMatrix, fov, aspectRatio, near, far);             
+        this.viewMatrix = mat4.create();  
+
+        const FOV = Math.PI / 3; // 45 degrees
+        const ASPECT_R = canvas.width / canvas.height; // Width divided by height
+        const NEAR_CLIP = 0.1; // Near clipping plane
+        const FAR_CLIP = 100.0; // Far clipping plane
+
+        mat4.perspective(this.projectionMatrix, FOV, ASPECT_R, NEAR_CLIP, FAR_CLIP);              
+        this.recalculate()                    
     }
 
     recalculate(){
@@ -93,7 +94,6 @@ class Camera {
         this.focusEntity = entity
     }
 
-    updatePo
     getMouseMovement(e){
         const movementX = e.movementX ||
             e.mozMovementX          ||

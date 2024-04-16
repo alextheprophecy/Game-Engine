@@ -24,12 +24,9 @@ out vec4 fragColour;
 
 void main()
 {
-
-
-
-    float ambientStrength = 0.05;
+    float ambientStrength = 0.02;
     float diffuseStrength = 0.8;
-    float specularStrength = 0.3;
+    float specularStrength = 0.1;
 
     vec3 ambient;
     vec3 diffuse;
@@ -38,16 +35,22 @@ void main()
     vec3 norm = normalize(vNormal);
     vec3 viewDir = normalize(cameraPosition - vPosition);
 
-    //calculate lighting for each light
+     //calculate lighting for each light
     for(int i = 0; i < 8; i++) {
         float lightRadius = lightColours[i].w;
-
-        float lightDist = distance(lightPositions[i], vPosition);
-        float att = 1.0 / (1.0 + 0.1*lightDist + 1.0/(lightRadius*lightRadius)*lightDist*lightDist);
+        vec3 lightDir;
+        float att;
+        if(lightRadius>0.){ //Point Light
+            float lightDist = distance(lightPositions[i], vPosition);
+            att = 1.0 / (1.0 + 0.1*lightDist + 1.0/(lightRadius*lightRadius)*lightDist*lightDist);
+            lightDir = normalize(lightPositions[i] - vPosition);  
+        }else{ //Directional Light
+            att = abs(lightRadius);
+            lightDir = -lightPositions[i];
+        }        
 
         ambient += ambientStrength*lightColours[i].xyz;        
 
-        vec3 lightDir = normalize(lightPositions[i] - vPosition);  
         float diff = max(dot(norm, lightDir), 0.0);
         diffuse += att * diffuseStrength * diff * lightColours[i].xyz;
 
@@ -55,10 +58,6 @@ void main()
         float spec = pow(max(dot(norm, halfwayDir), 0.0), 32.0);
         specular += att * specularStrength* spec * lightColours[i].xyz;   
     }
-
-    //ambient = normalize(ambient) * ambientStrength;
-    //diffuse = normalize(diffuse) * diffuseStrength;
-    //specular = normalize(specular) * specularStrength;
 
     //sample texture colour
     vec3 result = (ambient+diffuse) * objectColour + specular;

@@ -30,16 +30,15 @@ class Scene {
      * add Object to scene to render
      * @param {*} obj 
      */
-    addObject(obj, colour=null){
+    addObject(obj){
         switch(obj.constructor){
             case Entity:
-                obj.init(this.gl)
-                if(colour)obj.mesh.material.setColour(colour)
-                             
+                obj.init(this.gl)                             
                 this.entityList.push(obj)
                 break
             case PointLight:
-                console.warn("not yet implemented multiple lights in scene")
+                obj.load(this.gl)
+                this.lights.push(obj)
                 break 
         }
     }
@@ -50,16 +49,16 @@ class Scene {
      * @param {*} transform 
      * @param {*} material 
      */
-    createEntity(mesh, material, transform=null, colour=null){
+    createEntity(mesh, material, transform=null){
         const meshPromise = () => {
             if(mesh.constructor === String){ //load mesh from Url
-                return this.meshLoader.load(this.gl, mesh).then(m=>m)
+                return this.meshLoader.loadMesh(this.gl, mesh)  
             }
             return mesh
         }
         return Promise.resolve(meshPromise()).then((m)=>{
             const entity = new Entity(m, material, transform)
-            this.addObject(entity, colour)
+            this.addObject(entity)
             return entity
         })
     }

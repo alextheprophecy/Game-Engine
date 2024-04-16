@@ -31,8 +31,8 @@ class Terrain {
                 const bottomRight = bottomLeft + 1;
     
                 // Define two triangles for each square
-                indices.push(topLeft, bottomRight, bottomLeft);
-                indices.push(topLeft, topRight, bottomRight);
+                indices.push(bottomLeft, bottomRight, topLeft);
+                indices.push(bottomRight, topRight, topLeft);
             }
         }
     

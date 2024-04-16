@@ -15,14 +15,23 @@ setup();
 
 function setup() {
     const canvas = document.querySelector("#glcanvas");
-    const gl = canvas.getContext("webgl2");
+    const gl = canvas.getContext("webgl2", {premultipliedAlpha:false});
 
     if (gl === null) return alert("Unable to initialize WebGL. Your browser or machine may not support it.");
 
     gl.clearColor(0.05,0,0.15, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.enable(gl.DEPTH_TEST); // Enable depth testing
+
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
     gl.depthFunc(gl.LEQUAL); // Near things obscure far things
+    gl.enable(gl.DEPTH_TEST);
+
+    gl.enable(gl.CULL_FACE); 
+
     main(gl, canvas);
 }
 
@@ -30,9 +39,9 @@ function main(gl, canvas) {
     const camera = new Camera(canvas)
 
     const pointLight = new PointLight(new Transform([0,6,0]), 50.0, [1,0.7,0.4])
-    const pointLight2 = new PointLight(new Transform([-5,10,5]), 100)
-    const characterLight = new PointLight(new Transform([-10,2,0]),10, [0,0,1])
-    const lights = [pointLight, pointLight2,characterLight]
+    const dirLight = new PointLight(new Transform([2,-1,0]), -0.4, [0.6,0.7,0.4])
+    const characterLight = new PointLight(new Transform([-10,2,0]),10, [1,1,1])
+    const lights = [pointLight, dirLight,characterLight]
 
     const sh1 = new Shader("../Resources/Shaders/vertshader.vs.glsl", "../Resources/Shaders/fragshader.fs.glsl")
     const shTextured = new Shader("../Resources/Shaders/textured.vs.glsl", "../Resources/Shaders/textured.fs.glsl")
@@ -49,33 +58,43 @@ function main(gl, canvas) {
         //create textures and materials
         const textureP = new Texture("../Resources/Textures/palette.jpg").load(gl)
         const textureC = new Texture("../Resources/Textures/Texture.jpg").load(gl)
+        const textureG = new Texture("../Resources/Textures/grassTex.png").load(gl)
 
-        const terrainMat = new Material(shTerrain)
+        const terrainMat = new Material(shTerrain, [0.1,0.25,0], null)
         const croissantMat = new Material(shTextured, [1,1,1], textureC)
-        const treeMat = new Material(shTextured, [1,1,1], textureP)
-        const grassMat = new Material(grassShader, [1,1,1])
+        const treeMat = new Material(shTextured, [1,1,1], textureP, [0.05, 0.3, 0.1])
+        const grassMat = new Material(grassShader, [1,1,1], textureG)
 
         //add entitites to the scene
         const terrain = new Terrain(200,200,1)
-        scene.createEntity(terrain.getMesh(gl), terrainMat, new Transform([-50,-2,-50]), [1,1,1])
+        scene.createEntity(terrain.getMesh(gl), terrainMat, new Transform([-50,-2,-50]))
 
-        const grass = new GrassArea(gl, grassMat, new Transform([-3,-2,3]), 20, 20, 2)
+        const grass = new GrassArea(gl, grassMat, new Transform([-50,-2,-50]), 100, 100, 7)
 
         let croissant = null
-        scene.createEntity('../Resources/Models/croissant.obj', croissantMat,  new Transform([0,0,0], [0,0,0])).then(e=>{
+        scene.createEntity('../Resources/Models/croissant.obj', croissantMat,  new Transform([0,0,0])).then(e=>{
             camera.setFocus(e)
             croissant=e
         })
-        scene.createEntity('../Resources/Models/Tree02.obj', treeMat, new Transform([8,-2,-5]))
+        scene.createEntity('../Resources/Models/Tree02.obj', treeMat, new Transform([15,-2,-5]))
         
+        let then = 0;
+
         //main loop
         var loop = function(time) {
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
             if(croissant)characterLight.transform.follow(croissant.transform, [0,1,5])
             pointLight.transform.translate(0.2*Math.sin(time*0.002), 0, 0.2*Math.cos(time*0.002))
 
             scene.render()
-            grass.render(camera, lights)
+            grass.render(time, camera, lights)
 
+            /*time *= 0.001;                          // convert to seconds
+            const deltaTime = time - then;          // compute time since last frame
+            then = time;                            // remember time for next frame
+            const fps = 1 / deltaTime;   
+            //console.log(fps) */
             window.requestAnimationFrame(loop);
         }
         loop(0);

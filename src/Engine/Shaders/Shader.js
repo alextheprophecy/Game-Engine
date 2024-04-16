@@ -65,7 +65,7 @@ class Shader {
       colours: gl.getAttribLocation(this.shaderProgram, 'colour'),
       normals: gl.getAttribLocation(this.shaderProgram, 'normal'),
       m_transforms: gl.getAttribLocation(this.shaderProgram, 'm_transform'),
-      m_transformss: gl.getAttribLocation(this.shaderProgram, 'm_transform2'),
+      instanceIds: gl.getAttribLocation(this.shaderProgram, 'instanceId'),
     };
 
     this.uniforms = {
@@ -116,6 +116,14 @@ class Shader {
       texture: {
         type: 'texture',
         location: gl.getUniformLocation(this.shaderProgram, 'u_texture'),
+      },
+      materialProperties: {
+        type: 'vec3',
+        location: gl.getUniformLocation(this.shaderProgram, 'materialProperties'),
+      },
+      time: {
+        type: 'float',
+        location: gl.getUniformLocation(this.shaderProgram, 'time'),
       }
     };
   }
