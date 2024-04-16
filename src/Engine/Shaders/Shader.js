@@ -132,6 +132,10 @@ class Shader {
       viewDirectionProjectionInverse: {
         type: 'mat4',
         location: gl.getUniformLocation(this.shaderProgram, 'viewDirectionProjectionInverse'),
+      },
+      playerPosition: {
+        type: 'vec3',
+        location: gl.getUniformLocation(this.shaderProgram, 'playerPosition'),
       }
     };
   }

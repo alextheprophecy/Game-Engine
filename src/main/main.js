@@ -77,7 +77,7 @@ function main(gl, canvas) {
         const terrain = new Terrain(200,200,1)
         scene.createEntity(terrain.getMesh(gl), terrainMat, new Transform([-50,-2,-50]))
 
-        const grass = new GrassArea(gl, grassMat, new Transform([-50,-2,-50]), 100, 100, 7)
+        const grass = new GrassArea(gl, grassMat, new Transform([-50,-2,-50]), 100, 100, 12)
 
         let croissant = null
         scene.createEntity('../Resources/Models/croissant.obj', croissantMat,  new Transform([0,0,0])).then(e=>{
@@ -97,7 +97,7 @@ function main(gl, canvas) {
             pointLight.transform.translate(0.2*Math.sin(time*0.002), 0, 0.2*Math.cos(time*0.002))
 
             scene.render()
-            grass.render(time, camera, lights)
+            if(croissant)grass.render(time, camera, lights, croissant.transform.position)
             skyBox.render(camera)
 
             /*time *= 0.001;                          // convert to seconds

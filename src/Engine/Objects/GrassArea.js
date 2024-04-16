@@ -65,10 +65,11 @@ class GrassArea {
         })        
     }
 
-    render(time, camera, lights){
+    render(time, camera, lights, playerPosition){
         if(!this.grass)return
         this.grass.material.update(this.gl, camera, lights)
         this.grass.material.setUniform('time', time*0.0015)
+        this.grass.material.setUniform('playerPosition', playerPosition)
         this.grass.draw(this.gl, this.count)
     }
 

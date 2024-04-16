@@ -5,6 +5,7 @@ in vec3 vPosition;
 in vec3 vNormal;
 in vec2 vTexCoord;
 in float yPos;
+in vec3 vColour;
 
 // Uniforms
 uniform vec3 lightPositions[8]; // max 8 different light sources
@@ -12,6 +13,11 @@ uniform vec4 lightColours[8];
 uniform vec3 cameraPosition;
 
 uniform sampler2D u_texture;
+
+uniform vec4 u_fogColour;
+uniform float u_fogDensity;
+uniform float u_fogStart;
+
 
 out vec4 fragColour;
 
@@ -22,11 +28,6 @@ float grassUVs[3] = float[3](0.0,0.3, 0.45);
 
 void main()
 {
-
-    float pct = 0.0;
-    vec2 st = normalize(gl_FragCoord.xy);
-    pct = distance(st,vec2(0.5));
-
     float ambientStrength = 0.05*yPos*yPos;
     float diffuseStrength = 0.8;    
     float specularStrength = 0.2;
@@ -65,7 +66,18 @@ void main()
     //sample texture colour
     vec4 textColour = texture(u_texture, vec2(vTexCoord.x, vTexCoord.y));
     vec3 result = (ambient+diffuse) * textColour.xyz + specular*textColour.w;
-    fragColour = vec4(result, textColour.w);
+
+    //calculate fog
+    float dist = distance(cameraPosition, vPosition);
+    float fogAmount = 0.0;
+    if(dist>=u_fogStart){
+        float fogDistance = length(vPosition-cameraPosition);
+        float linearFog = smoothstep(u_fogStart, u_fogStart+5.0, fogDistance);
+        fogAmount = 1.0 - exp2(-u_fogDensity * u_fogDensity * fogDistance * fogDistance * LOG2);
+        fogAmount = clamp(fogAmount, 0., 1.)*linearFog;
+    }
+
+    fragColour = mix(vec4(result, textColour.w), u_fogColour, fogAmount);  
 
     if(textColour.w<0.75)discard;
  
