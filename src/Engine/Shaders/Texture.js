@@ -30,12 +30,16 @@ class Texture {
         return this
     }
 
-    loadAsCubeMap(gl){
+    loadAsCubeMap(gl, fileType="jpg"){
+      let images = ["posx", "negx", "posy", "negy", "posz", "negz"]
+      images = images.map(i=>this.src+i+"."+fileType)
+      console.log(images)
+
       this.texture = gl.createTexture();
 
       gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.texture);
       const orientations = [gl.TEXTURE_CUBE_MAP_POSITIVE_X,  gl.TEXTURE_CUBE_MAP_NEGATIVE_X, gl.TEXTURE_CUBE_MAP_POSITIVE_Y, gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, gl.TEXTURE_CUBE_MAP_POSITIVE_Z, gl.TEXTURE_CUBE_MAP_NEGATIVE_Z]
-      this.src.forEach((url, i) => {
+      images.forEach((url, i) => {
         const target = orientations[i]
         // Upload the canvas to the cubemap face.
         const level = 0;

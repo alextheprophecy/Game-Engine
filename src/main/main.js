@@ -60,12 +60,10 @@ function main(gl, canvas) {
         const textureP = new Texture("../Resources/Textures/palette.jpg").loadAsTexture(gl)
         const textureC = new Texture("../Resources/Textures/Texture.jpg").loadAsTexture(gl)
         const textureG = new Texture("../Resources/Textures/grassTex.png").loadAsTexture(gl)
-        const textureSkyBox = new Texture(["../Resources/Textures/CubeMap/pos-x.jpg", "../Resources/Textures/CubeMap/neg-x.jpg",
-            "../Resources/Textures/CubeMap/pos-y.jpg", "../Resources/Textures/CubeMap/neg-y.jpg",
-            "../Resources/Textures/CubeMap/pos-z.jpg", "../Resources/Textures/CubeMap/neg-z.jpg"]).loadAsCubeMap(gl)
+        const textureSkyBox = new Texture("../Resources/Textures/CubeMaps/third/").loadAsCubeMap(gl, "bmp")
 
         const terrainMat = new Material(shTerrain, [0.1,0.25,0], null)
-        const croissantMat = new Material(shTextured, [1,1,1], textureC)
+        const croissantMat = new Material(shTextured, [1,1,1], textureC, [0.2, 0.8, 1])
         const treeMat = new Material(shTextured, [1,1,1], textureP, [0.05, 0.3, 0.1])
         const grassMat = new Material(grassShader, [1,1,1], textureG)
         const skyBoxMat = new Material(skyBoxShader, [1,1,1])
@@ -75,9 +73,9 @@ function main(gl, canvas) {
         skyBox.init(gl, skyBoxMat, textureSkyBox)
 
         const terrain = new Terrain(200,200,1)
-        scene.createEntity(terrain.getMesh(gl), terrainMat, new Transform([-50,-2,-50]))
+        //scene.createEntity(terrain.getMesh(gl), terrainMat, new Transform([-50,-2,-50]))
 
-        const grass = new GrassArea(gl, grassMat, new Transform([-50,-2,-50]), 100, 100, 12)
+        const grass = new GrassArea(gl, grassMat, new Transform([-25,-2,-25]), 50, 50, 12)
 
         let croissant = null
         scene.createEntity('../Resources/Models/croissant.obj', croissantMat,  new Transform([0,0,0])).then(e=>{

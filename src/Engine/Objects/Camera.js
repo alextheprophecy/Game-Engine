@@ -45,7 +45,7 @@ class Camera {
 
     keyPress(event){
         if(!this.focusEntity)return
-        const rotateSpeed = 7
+        const rotateSpeed = 4
         if (event.key === "a") {  
             //const f = this.focusEntity.transform.right()              
             //this.focusEntity.transform.translate(-f[0], -f[1], -f[2]);
@@ -55,13 +55,13 @@ class Camera {
             //this.focusEntity.transform.translate(f[0], f[1], f[2]);
             this.focusEntity.transform.rotate(0,-rotateSpeed,0);
         }
-        
+        const moveSpeed = 0.45
         if (event.key === "w") {
             const f = this.focusEntity.transform.forward()
-            this.focusEntity.transform.translate(f[0], f[1], f[2]);
+            this.focusEntity.transform.translate(moveSpeed*f[0], moveSpeed*f[1], moveSpeed*f[2]);
         }else if (event.key === "s") {
             const f = this.focusEntity.transform.forward()
-            this.focusEntity.transform.translate(-f[0], -f[1], -f[2]);
+            this.focusEntity.transform.translate(-moveSpeed*f[0], -moveSpeed*f[1], -moveSpeed*f[2]);
 
         }
         vec3.add(this.target, this.focusEntity.transform.position, this.focusOffset)
