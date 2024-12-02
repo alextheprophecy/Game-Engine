@@ -17,9 +17,8 @@ A simple 3D game/render engine built from scratch using WebGL 2.0. I decided to 
   - Up to 8 concurrent light sources
   - Configurable light colors and intensities
   - Point lights and directional lights
-- **Atmospheric Effects**:
-  - Non-linear fog system with customizable density and color
-  - Smooth distance-based fog transitions
+- **Atmospherical Fog**:
+  - Non-linear fog system with customizable density, falloff and colour
 
 ### Asset Management
 - **Custom OBJ Loader**: 
