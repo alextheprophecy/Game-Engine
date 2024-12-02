@@ -63,7 +63,7 @@ void main()
         float spec = pow(max(dot(norm, halfwayDir), 0.0), 32.0);
         specular += att * specularStrength* spec * lightColours[i].xyz;   
     }
-    vec3 res = mix(vec3(0.898, 0.5961, 0.0745), vec3(0.1961, 0.9451, 0.1961),gScale);
+    vec3 res = mix(vec3(0.798, 0.7561, 0.0745), vec3(0.1961, 0.9451, 0.1961),gScale);
     //sample texture colour
     vec4 textColour = texture(u_texture, vec2(vTexCoord.x+grassUVs[grassIndex], vTexCoord.y));
     vec3 result = (ambient+diffuse) * textColour.xyz * res+ specular;
