@@ -20,6 +20,12 @@ function setup() {
     const canvas = document.querySelector("#glcanvas");
     const gl = canvas.getContext("webgl2", {premultipliedAlpha:false});
 
+    if (!gl) {
+        console.log('WebGL2 not supported');
+    } else {
+        console.log('WebGL2 is supported');
+    }
+
     if (gl === null) return alert("Unable to initialize WebGL. Your browser or machine may not support it.");
 
     gl.clearColor(0.05,0,0.15, 1.0);
@@ -42,8 +48,10 @@ function main(gl, canvas) {
     const camera = new Camera(canvas)
 
     const pointLight = new PointLight(new Transform([0,6,0]), 50.0, [1,0.7,0.4])
+    const pointLight2 = new PointLight(new Transform([4,4,0]), 50.0, [1,0.1,0.1])
+    const pointLight3 = new PointLight(new Transform([1,4,2]), 50.0, [0, 0, 1])
     const dirLight = new PointLight(new Transform([2,-1,0]), -0.4, [0.6,0.7,0.4])
-    const lights = [pointLight, dirLight]
+    const lights = [pointLight, pointLight2, pointLight3, dirLight]
 
     const sh1 = new Shader(RESOURCE_PATH + "Shaders/vertshader.vs.glsl", RESOURCE_PATH + "Shaders/fragshader.fs.glsl")
     const shTextured = new Shader(RESOURCE_PATH + "Shaders/textured.vs.glsl", RESOURCE_PATH + "Shaders/textured.fs.glsl")
@@ -95,7 +103,9 @@ function main(gl, canvas) {
 
             //if(croissant)characterLight.transform.follow(croissant.transform, [0,2,5])
             pointLight.transform.translate(0.2*Math.sin(time*0.002), 0, 0.2*Math.cos(time*0.002))
-            scene.render()
+            pointLight2.transform.translate(0,0,0.2*Math.sin(time*0.005))
+            pointLight3.transform.translate(0,0.075*Math.sin(time*0.005),0)
+                scene.render()
             if(croissant)grass.render(time, camera, lights, croissant.transform.position)
             skyBox.render(camera)
         
