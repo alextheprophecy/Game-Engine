@@ -10,8 +10,6 @@ A simple 3D game/render engine built from scratch using WebGL 2.0. I decided to 
 
 ---
 
-## 🌟 Features
-
 ### Lighting & Effects
 - **Blinn-Phong Lighting**:
   - Up to 8 concurrent light sources
