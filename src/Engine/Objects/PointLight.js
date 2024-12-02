@@ -8,7 +8,7 @@ class PointLight{
         this.transform = transform
         this.brightness = brightness
         this.colour = colour
-        this.shader = new Shader("../Resources/Shaders/light.vs.glsl", "../Resources/Shaders/light.fs.glsl")
+        this.shader = new Shader("./src/Resources/Shaders/light.vs.glsl", "./src/Resources/Shaders/light.fs.glsl")
         this.entity = null
     }
 

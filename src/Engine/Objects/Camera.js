@@ -5,7 +5,7 @@ class Camera {
         this.focusEntity = null
         this.position = [0,3,10]
         this.target = [0, 0, 0]// Camera target
-        this.distance = 10
+        this.distance = 15
 
         this.projectionMatrix = mat4.create();
         this.viewMatrix = mat4.create();  

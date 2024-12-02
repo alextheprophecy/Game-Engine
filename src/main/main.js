@@ -12,6 +12,8 @@ import SkyBox from "../Engine/Objects/SkyBox.js";
 
 const { mat4, mat3, vec2, vec3, vec4, quat} = glMatrix;
 
+const RESOURCE_PATH = "./src/Resources/"
+
 setup();  
 
 function setup() {
@@ -43,11 +45,11 @@ function main(gl, canvas) {
     const dirLight = new PointLight(new Transform([2,-1,0]), -0.4, [0.6,0.7,0.4])
     const lights = [pointLight, dirLight]
 
-    const sh1 = new Shader("../Resources/Shaders/vertshader.vs.glsl", "../Resources/Shaders/fragshader.fs.glsl")
-    const shTextured = new Shader("../Resources/Shaders/textured.vs.glsl", "../Resources/Shaders/textured.fs.glsl")
-    const shTerrain = new Shader("../Resources/Shaders/terrain.vs.glsl", "../Resources/Shaders/terrain.fs.glsl")
-    const grassShader  = new Shader("../Resources/Shaders/grass.vs.glsl", "../Resources/Shaders/grass.fs.glsl")
-    const skyBoxShader  = new Shader("../Resources/Shaders/skybox.vs.glsl", "../Resources/Shaders/skybox.fs.glsl")
+    const sh1 = new Shader(RESOURCE_PATH + "Shaders/vertshader.vs.glsl", RESOURCE_PATH + "Shaders/fragshader.fs.glsl")
+    const shTextured = new Shader(RESOURCE_PATH + "Shaders/textured.vs.glsl", RESOURCE_PATH + "Shaders/textured.fs.glsl")
+    const shTerrain = new Shader(RESOURCE_PATH + "Shaders/terrain.vs.glsl", RESOURCE_PATH + "Shaders/terrain.fs.glsl")
+    const grassShader  = new Shader(RESOURCE_PATH + "Shaders/grass.vs.glsl", RESOURCE_PATH + "Shaders/grass.fs.glsl")
+    const skyBoxShader  = new Shader(RESOURCE_PATH + "Shaders/skybox.vs.glsl", RESOURCE_PATH + "Shaders/skybox.fs.glsl")
 
     const shaders = [sh1, shTextured, shTerrain, grassShader, skyBoxShader]
 
@@ -57,10 +59,10 @@ function main(gl, canvas) {
         setUpInputListeners(scene, canvas)
 
         //create textures and materials
-        const textureP = new Texture("../Resources/Textures/palette.jpg").loadAsTexture(gl)
-        const textureC = new Texture("../Resources/Textures/Texture.jpg").loadAsTexture(gl)
-        const textureG = new Texture("../Resources/Textures/grassTex.png").loadAsTexture(gl)
-        const textureSkyBox = new Texture("../Resources/Textures/CubeMaps/third/").loadAsCubeMap(gl, "bmp")
+        const textureP = new Texture(RESOURCE_PATH + "Textures/palette.jpg").loadAsTexture(gl)
+        const textureC = new Texture(RESOURCE_PATH + "Textures/Texture.jpg").loadAsTexture(gl)
+        const textureG = new Texture(RESOURCE_PATH + "Textures/grassTex.png").loadAsTexture(gl)
+        const textureSkyBox = new Texture(RESOURCE_PATH + "Textures/CubeMaps/third/").loadAsCubeMap(gl, "bmp")
 
         const terrainMat = new Material(shTerrain, [0.1,0.25,0], null)
         const croissantMat = new Material(shTextured, [1,1,1], textureC, [0.2, 0.8, 1])
@@ -78,12 +80,12 @@ function main(gl, canvas) {
         const grass = new GrassArea(gl, grassMat, new Transform([-25,0,-25]), 50, 50, 12)
 
         let croissant = null
-        scene.createEntity('../Resources/Models/croissant.obj', croissantMat,  new Transform([0,2,0])).then(e=>{
+        scene.createEntity(RESOURCE_PATH + "Models/croissant.obj", croissantMat,  new Transform([0,2,0])).then(e=>{
             camera.setFocus(e, [0,2,0])
             croissant=e
         })
 
-        scene.createEntity('../Resources/Models/Tree02.obj', treeMat, new Transform([15,0,-5]))
+        scene.createEntity(RESOURCE_PATH + "Models/Tree02.obj", treeMat, new Transform([15,0,-5]))
         
         let then = 0;
 

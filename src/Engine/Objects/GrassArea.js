@@ -18,7 +18,7 @@ class GrassArea {
 
     init(){
         this.perlin.seed()
-        this.meshLoader.getData('../Resources/Models/grassBladeRectangular.obj').then((mesh)=>{
+        this.meshLoader.getData('./src/Resources/Models/grassBladeRectangular.obj').then((mesh)=>{
             let vertices = []
             let normals = []
             let colours = []
