@@ -11,6 +11,14 @@
   </head>
 
   <body>
+    <div id="loadingPopup" class="loading-popup">
+      <div class="loading-content">
+        <h2>Loading warning</h2>
+        <p>Hi there!<br>The textures may take a few seconds to load :)</p>
+        <button id="dismissButton" class="dismiss-button">OK</button>
+      </div>
+    </div>
+
     <div class="container">
       <h1>3D Render Engine from scratch</h1>
       <p class="author">by Alexandre Bourgoin</p>
@@ -31,5 +39,15 @@
         </a>
       </div>
     </div>
+
+    <script>
+      // Hide loading popup after click or 5 seconds
+      const popup = document.getElementById('loadingPopup');
+      const dismissButton = document.getElementById('dismissButton');
+      
+      dismissButton.addEventListener('click', () => {
+        popup.style.display = 'none';
+      });
+    </script>
   </body>
 </html>
