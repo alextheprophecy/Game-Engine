@@ -33,6 +33,7 @@ void main()
     vec3 specular;
 
     vec3 norm = normalize(vNormal);
+
     vec3 viewDir = normalize(cameraPosition - vPosition);
 
      //calculate lighting for each light
@@ -69,5 +70,5 @@ void main()
     float fogAmount = 1.0 - exp2(-u_fogDensity * u_fogDensity * fogDistance * fogDistance * LOG2);
     fogAmount = clamp(fogAmount, 0., 1.);
 
-    fragColour = tfragColour;//mix(tfragColour, u_fogColour, fogAmount*linearFog);  
+    fragColour = mix(tfragColour, u_fogColour, fogAmount*linearFog);  
 }  

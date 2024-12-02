@@ -42,7 +42,7 @@ class GrassArea {
                     transforms.push(t.transformationMatrix());
                     const n = this.perlin.get(x/this.width, z/this.depth)
                     instanceIds.push(n)
-                    instanceIds.push(this.perlin.get(n, (z+x)/(2*this.depth)))
+                    instanceIds.push(this.perlin.get(z,x))
                 }
             }
             transforms = transforms.map(a => [...a]).flat();  
@@ -54,9 +54,15 @@ class GrassArea {
             grass.bufferData(this.gl, mesh.positions.map(e=>e*0.08), 3, "positions")
             grass.bufferData(this.gl, mesh.uvs, 2, "uvs")
 
+            //grass.bufferData(this.gl, [0,0,1, 0,0,1, 0,0,1, 0,0,-1, 0,0,-1, 0,0,-1], 3, "normals")
+            //grass.bufferData(this.gl, [-0.5,0,0, 0.5,0,0, -0.5,2,0, -0.5,2,0,0.5,0,0, 0.5,2,0], 3, "positions")
+          
+            //grass.bufferData(this.gl, [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,], 2, "uvs")
+  
             //grass instance data
             grass.bufferData(this.gl, transforms, 4, "m_transforms", true)
             grass.bufferData(this.gl, instanceIds, 2, "instanceIds", true)
+            console.log(instanceIds)
     
             grass.bind(this.gl, this.material)
             grass.material.setUniform('transformationMatrix', this.transform.transformationMatrix()) 
@@ -113,7 +119,7 @@ class GrassArea {
             let xb = this.interp(x-xf, bl, br);
             let v = this.interp(y-yf, xt, xb);
             this.memory[[x,y]] = v;
-            return v*0.5;
+            return v;
         }
     }
 }

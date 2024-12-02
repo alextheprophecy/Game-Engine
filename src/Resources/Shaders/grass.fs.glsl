@@ -5,8 +5,8 @@ in vec3 vPosition;
 in vec3 vNormal;
 in vec2 vTexCoord;
 in float yPos;
+in float gScale;
 in vec3 vColour;
-
 // Uniforms
 uniform vec3 lightPositions[8]; // max 8 different light sources
 uniform vec4 lightColours[8];    
@@ -25,12 +25,13 @@ out vec4 fragColour;
 
 
 float grassUVs[3] = float[3](0.0,0.3, 0.45);
+int grassIndex = 0;
 
 void main()
 {
-    float ambientStrength = 0.05*yPos*yPos;
+    float ambientStrength = 0.07*yPos*yPos;
     float diffuseStrength = 0.8;    
-    float specularStrength = 0.2;
+    float specularStrength = 0.45;
 
     vec3 ambient;
     vec3 diffuse;
@@ -62,10 +63,10 @@ void main()
         float spec = pow(max(dot(norm, halfwayDir), 0.0), 32.0);
         specular += att * specularStrength* spec * lightColours[i].xyz;   
     }
-    
+    vec3 res = mix(vec3(0.898, 0.5961, 0.0745), vec3(0.1961, 0.9451, 0.1961),gScale);
     //sample texture colour
-    vec4 textColour = texture(u_texture, vec2(vTexCoord.x, vTexCoord.y));
-    vec3 result = (ambient+diffuse) * textColour.xyz + specular*textColour.w;
+    vec4 textColour = texture(u_texture, vec2(vTexCoord.x+grassUVs[grassIndex], vTexCoord.y));
+    vec3 result = (ambient+diffuse) * textColour.xyz * res+ specular;
 
     //calculate fog
     float dist = distance(cameraPosition, vPosition);

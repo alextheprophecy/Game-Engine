@@ -1,6 +1,6 @@
 class Material {
     defaultColour = [0.8,0.2,0.42]
-    defaultFogData = {'fogColour': [0.8,0.8,1, 1], 'fogDensity': 0.025, 'fogStart': 0}//'fogColour': [0.8, 0.8, 1, 1]
+    defaultFogData = {'fogColour': [0.8,0.8,1, 1], 'fogDensity': 0.005, 'fogStart': 50}//'fogColour': [0.8, 0.8, 1, 1]
     defaultMaterialProperties = [0.06, 1, 0.2]
 
     constructor(shader, colour =this.defaultColour, texture=null, materialProperties=this.defaultMaterialProperties, fogData = null) {

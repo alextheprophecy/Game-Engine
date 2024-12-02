@@ -52,8 +52,8 @@ function main(gl, canvas) {
     const shaders = [sh1, shTextured, shTerrain, grassShader, skyBoxShader]
 
     const scene = new Scene(gl, camera, lights, shaders)
-
-    scene.init().then(()=>{        
+    
+    scene.init().then(()=>{
         setUpInputListeners(scene, canvas)
 
         //create textures and materials
@@ -72,18 +72,18 @@ function main(gl, canvas) {
         const skyBox = new SkyBox()
         skyBox.init(gl, skyBoxMat, textureSkyBox)
 
-        const terrain = new Terrain(200,200,1)
-        //scene.createEntity(terrain.getMesh(gl), terrainMat, new Transform([-50,-2,-50]))
+        const terrain = new Terrain(50,50,1)
+        scene.createEntity(terrain.getMesh(gl), terrainMat, new Transform([-25,0,-25]))
 
-        const grass = new GrassArea(gl, grassMat, new Transform([-25,-2,-25]), 50, 50, 12)
+        const grass = new GrassArea(gl, grassMat, new Transform([-25,0,-25]), 50, 50, 12)
 
         let croissant = null
-        scene.createEntity('../Resources/Models/croissant.obj', croissantMat,  new Transform([0,0,0])).then(e=>{
+        scene.createEntity('../Resources/Models/croissant.obj', croissantMat,  new Transform([0,2,0])).then(e=>{
             camera.setFocus(e, [0,2,0])
             croissant=e
         })
 
-        scene.createEntity('../Resources/Models/Tree02.obj', treeMat, new Transform([15,-2,-5]))
+        scene.createEntity('../Resources/Models/Tree02.obj', treeMat, new Transform([15,0,-5]))
         
         let then = 0;
 
@@ -93,10 +93,10 @@ function main(gl, canvas) {
 
             //if(croissant)characterLight.transform.follow(croissant.transform, [0,2,5])
             pointLight.transform.translate(0.2*Math.sin(time*0.002), 0, 0.2*Math.cos(time*0.002))
-
             scene.render()
             if(croissant)grass.render(time, camera, lights, croissant.transform.position)
             skyBox.render(camera)
+        
 
             /*time *= 0.001;                          // convert to seconds
             const deltaTime = time - then;          // compute time since last frame
