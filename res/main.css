@@ -1,0 +1,60 @@
+body {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.author {
+  color: #a0a0a0;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.instructions {
+  color: #808080;
+  margin-bottom: 20px;
+}
+
+.links {
+  margin-top: 30px;
+}
+
+.links a {
+  color: #4a9eff;
+  text-decoration: none;
+  margin: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.links a:hover {
+  color: #77b7ff;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+canvas {
+  border: 1px solid #333;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+} 

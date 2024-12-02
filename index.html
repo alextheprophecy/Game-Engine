@@ -4,20 +4,32 @@
     <meta charset="utf-8" />
     <title>WebGL Demo</title>
     <link rel="shortcut icon" href="">
-    <script src="https://cdn.jsdelivr.net/gh/toji/gl-matrix/dist/gl-matrix-min.js"></script>
-    <script src="Game-Engine/src/main/main.js" type="module"></script>
+    <link rel="stylesheet" href="./res/main.css">
 
-    <style>
-     canvas {
-        margin-left: auto;
-        margin-right: auto;
-        display: block;
-    }
-    </style>
+    <script src="https://cdn.jsdelivr.net/gh/toji/gl-matrix/dist/gl-matrix-min.js"></script>
+    <script src="./src/main/main.js" type="module"></script>
   </head>
 
   <body>
-    From scratch 3D render engine. Move with WASD, look/zoom with mouse.
-    <canvas id="glcanvas" width="1080" height="540"></canvas>
+    <div class="container">
+      <h1>3D Render Engine from scratch</h1>
+      <p class="author">by Alexandre Bourgoin</p>
+      <p class="instructions">Move with WASD, look/zoom with mouse</p>
+      
+
+      <canvas id="glcanvas" width="1080" height="540"></canvas>
+      
+      <div class="links">
+        <a href="https://github.com/alextheprophecy" target="_blank">
+          <img src="./res/github-icon.png" alt="GitHub" class="icon">
+          alextheprophecy
+        </a>
+        <span style="color: #666;">•</span>
+        <a href="mailto:alexandre.bourgoin@epfl.ch">
+          <img src="./res/email-icon.png" alt="Email" class="icon" style="filter: invert(1);">
+          alexandre.bourgoin@epfl.ch
+        </a>
+      </div>
+    </div>
   </body>
 </html>
