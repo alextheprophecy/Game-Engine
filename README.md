@@ -17,7 +17,7 @@ A simple 3D game/render engine built from scratch using WebGL 2.0. I decided to 
   - Point lights and directional lights
 - **Atmospherical Fog**:
   - Non-linear fog system with customizable density, falloff and colour
-
+- **Custom Skybox**
 ### Asset Management
 - **Custom OBJ Loader**: 
   - Parsing and loading of .obj files
