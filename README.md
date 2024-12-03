@@ -2,7 +2,7 @@
 
 A simple 3D game/render engine built from scratch using WebGL 2.0. I decided to program this project from absolute scratch, using only gl-matrix library for matrix operations.
 
-## Check it out here: [https://alextheprophecy.github.io/Game-Engine/](https://alextheprophecy.github.io/Game-Engine/)
+## Check live demo out here: [https://alextheprophecy.github.io/Game-Engine/](https://alextheprophecy.github.io/Game-Engine/)
 
 ![Screenshot 2024-12-02 021607](https://github.com/user-attachments/assets/cc634cfe-2bcf-4577-8233-2ace435ea995)
 ![image](https://github.com/user-attachments/assets/3479a975-57a2-48c8-a0fa-58d9c60a92fd)
